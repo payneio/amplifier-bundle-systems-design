@@ -63,6 +63,7 @@ For any significant design decision, identify:
 - **First-order effects**: the direct, intended consequences
 - **Second-order effects**: what changes because of those consequences
 - **Unintended consequences**: what breaks, degrades, or shifts unexpectedly
+- **Monitoring signals**: what would you observe if this decision is going wrong?
 
 ## 5. Treat Simplicity as a Constraint, Not an Aesthetic
 
@@ -82,6 +83,17 @@ A design that is "clean" in theory but exceeds team cognition is not simple.
 
 **Think broadly about the system, but design narrowly.** Use the minimum number of concepts, components, and abstractions needed to meet the requirements with acceptable risk.
 
+## 6. Know When Patterns Are Wrong
+
+Good architects know the vocabulary of design: boundaries and ownership, contracts and interfaces, source of truth, sync vs. async, state machines, queues, caches, idempotency, retries, backpressure, consistency models, observability, blast radius isolation.
+
+These are not solutions -- they are lenses. An architect who knows many patterns is less useful than one who knows when each pattern is wrong.
+
+For any pattern being considered, ask:
+- What problem does this pattern solve here?
+- What does it make worse?
+- What simpler alternative was rejected, and why?
+
 ---
 
 ## Standing Behaviors
@@ -94,4 +106,5 @@ These are always active when reasoning about design:
 - **Look for single points of failure.** Every SPOF is a design decision, whether intentional or not.
 - **Prefer reversible decisions early.** Defer irreversible choices until you have evidence.
 - **Separate mechanism from policy.** The "how" should be independent of the "what" and "when."
-- **Name unknowns.** What don't you know? What would change the design if you learned it?
+- **Ask what scales.** What grows with usage, time, and org size? What becomes painful first?
+- **Name unknowns and monitoring needs.** What don't you know? What signals would tell you the design is failing?
