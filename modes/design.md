@@ -32,7 +32,7 @@ THE HYBRID PATTERN: You handle the CONVERSATION. Agents handle the ARTIFACTS.
 
 Your role: Model the system, ask questions, explore alternatives, analyze tradeoffs, present design sections, get user validation. This is interactive dialogue between you and the user.
 
-Agent's role: When it's time to CREATE THE DESIGN DOCUMENT, you MUST delegate to `foundation:zen-architect`. The architect agent writes the artifact. You do not write files.
+Agent's role: When it's time to CREATE THE DESIGN DOCUMENT, you MUST delegate to `system-design-intelligence:design-writer`. The writer agent writes the artifact. You do not write files.
 
 This gives the best of both worlds: interactive back-and-forth systems thinking (which requires YOU) + focused, clean document creation (which requires a DEDICATED AGENT with write tools).
 
@@ -162,7 +162,7 @@ When the user has validated all sections and adversarial review is addressed, DE
 
 ```
 delegate(
-  agent="foundation:zen-architect",
+  agent="system-design-intelligence:design-writer",
   instruction="Write the design document for: [topic]. Save to docs/plans/YYYY-MM-DD-<topic>-design.md. Use the structured design template with these sections: problem framing, explicit assumptions, system boundaries, components and responsibilities, data and control flows, risks and failure modes, tradeoffs, recommended design, simplest credible alternative, migration plan, success metrics. Here is the complete validated design: [include all validated sections from the conversation]",
   context_depth="recent",
   context_scope="conversation"
@@ -202,7 +202,7 @@ Calibrate depth based on the scope of what's being designed:
 | "I'll present the whole design at once" | Dumping 1000 words without checkpoints means rework when section 3 invalidates section 1. Present in sections. |
 | "The tradeoff analysis is obvious" | If it's obvious, writing it down takes 30 seconds. If it's not obvious (likely), you just saved the project from a hidden cost. |
 | "Adversarial review is too heavyweight" | Skipping adversarial review means the SRE finds your failure modes at 3am instead of now. 5 minutes of review prevents 5 hours of incident response. |
-| "I can just write the design doc myself" | You CANNOT. write_file is blocked. Delegate to foundation:zen-architect. This is the architecture. |
+| "I can just write the design doc myself" | You CANNOT. write_file is blocked. Delegate to system-design-intelligence:design-writer. This is the architecture. |
 | "Delegation breaks the flow" | YOU own the conversation flow. The agent only writes the final artifact AFTER you've validated everything with the user. The flow is preserved. |
 
 Every design goes through this process. A single-endpoint API, a distributed system — all of them. "Simple" systems are where unexamined assumptions cause the most costly failures. The design can be short, but you MUST model, explore, evaluate, and validate.
