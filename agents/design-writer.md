@@ -19,7 +19,7 @@ meta:
     <commentary>Document creation is the design-writer agent's sole responsibility.</commentary>
     </example>
 
-  model_role: [writing, general]
+model_role: [writing, general]
 
 tools:
   - module: tool-filesystem
