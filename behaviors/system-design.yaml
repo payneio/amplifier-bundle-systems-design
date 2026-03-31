@@ -37,6 +37,12 @@ tools:
       skills:
         - "/data/labs/amplifier-system-design/skills"
 
+agents:
+  include:
+    - system-design-intelligence:systems-architect
+    - system-design-intelligence:design-critic
+    - system-design-intelligence:design-writer
+
 context:
   include:
     - system-design-intelligence:context/system-design-principles.md
