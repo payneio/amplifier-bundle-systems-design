@@ -1,8 +1,8 @@
 bundle:
-  name: system-design-behavior
+  name: systems-design-behavior
   version: 0.1.0
   description: |
-    System design methodology behavior.
+    Systems design methodology behavior.
     Loads design principles, structured output template, and standing orders
     into the root session context. Provides /systems-design and /systems-design-review modes.
 
@@ -15,14 +15,15 @@ includes:
 
 # Mode hook to discover systems-design modes (systems-design, systems-design-review)
 # TODO: When published to git, replace absolute path with:
-#   "@system-design-intelligence:modes"
+#   "@systems-design:modes"
 # or a git+https:// URL. The @namespace syntax does not resolve at mount time.
 hooks:
   - module: hooks-mode
     source: git+https://github.com/microsoft/amplifier-bundle-modes@main#subdirectory=modules/hooks-mode
     config:
       search_paths:
-        - "/data/labs/amplifier-system-design/modes"
+        - ../modes
+
   # Design-context awareness: injects existing design docs and active design
   # phase into agent context before every LLM call.
   - module: hooks-design-context
@@ -42,18 +43,18 @@ tools:
     source: git+https://github.com/microsoft/amplifier-module-tool-skills@main
     config:
       skills:
-        - "/data/labs/amplifier-system-design/skills"
+        - ../skills
 
 agents:
   include:
-    - system-design-intelligence:systems-architect
-    - system-design-intelligence:systems-design-critic
-    - system-design-intelligence:systems-design-writer
+    - systems-design:systems-architect
+    - systems-design:systems-design-critic
+    - systems-design:systems-design-writer
 
 context:
   include:
-    - system-design-intelligence:context/instructions.md
-    - system-design-intelligence:context/system-design-principles.md
-    - system-design-intelligence:context/tradeoff-frame.md
-    - system-design-intelligence:context/adversarial-perspectives.md
-    - system-design-intelligence:context/structured-design-template.md
+    - systems-design:context/instructions.md
+    - systems-design:context/system-design-principles.md
+    - systems-design:context/tradeoff-frame.md
+    - systems-design:context/adversarial-perspectives.md
+    - systems-design:context/structured-design-template.md
