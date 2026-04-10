@@ -26,7 +26,7 @@ hooks:
   # Design-context awareness: injects existing design docs and active design
   # phase into agent context before every LLM call.
   - module: hooks-design-context
-    source: ./modules/hooks-design-context
+    source: ../modules/hooks-design-context
     config:
       design_docs_glob: "docs/designs/*.md"
       priority: 5
