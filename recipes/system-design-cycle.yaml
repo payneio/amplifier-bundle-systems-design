@@ -25,12 +25,12 @@ tags: ["design", "system-design", "staged", "approval-gates", "full-cycle"]
 #
 # Stage 4: Documentation (Phases 7-8)
 #   - Migration strategy and success metrics
-#   - design-writer produces final document
+#   - systems-design-writer produces final document
 #
 # Typical runtime: 15-30 minutes (includes approval wait times)
 # Required agents: system-design-intelligence:systems-architect,
-#                  system-design-intelligence:design-critic,
-#                  system-design-intelligence:design-writer
+#                  system-design-intelligence:systems-design-critic,
+#                  system-design-intelligence:systems-design-writer
 #
 # Usage:
 #   Execute recipe with design_problem="description of what to design"
@@ -239,7 +239,7 @@ stages:
           "combine X from scalable with Y from robust").
     steps:
       - id: "adversarial-review"
-        agent: "system-design-intelligence:design-critic"
+        agent: "system-design-intelligence:systems-design-critic"
         timeout: 600
         output: "risk_assessment"
         prompt: |
@@ -328,7 +328,7 @@ stages:
         - Deny to stop and refine further interactively.
     steps:
       - id: "write-document"
-        agent: "system-design-intelligence:design-writer"
+        agent: "system-design-intelligence:systems-design-writer"
         timeout: 600
         output: "design_document"
         prompt: |

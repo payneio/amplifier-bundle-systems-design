@@ -15,7 +15,7 @@ tags: ["design", "exploration", "parallel", "tradeoff-analysis", "system-design"
 #
 # Typical runtime: 5-15 minutes
 # Required agents: system-design-intelligence:systems-architect,
-#                  system-design-intelligence:design-critic
+#                  system-design-intelligence:systems-design-critic
 #
 # Usage:
 #   Execute recipe with design_problem="description of what to design
@@ -131,7 +131,7 @@ steps:
 
   # Step 4: Optional adversarial review of the recommendation
   - id: "adversarial-review"
-    agent: "system-design-intelligence:design-critic"
+    agent: "system-design-intelligence:systems-design-critic"
     condition: "{{with_adversarial_review}} == 'true'"
     prompt: |
       Review the recommended design from this exploration:

@@ -47,8 +47,8 @@ tools:
 agents:
   include:
     - system-design-intelligence:systems-architect
-    - system-design-intelligence:design-critic
-    - system-design-intelligence:design-writer
+    - system-design-intelligence:systems-design-critic
+    - system-design-intelligence:systems-design-writer
 
 context:
   include:

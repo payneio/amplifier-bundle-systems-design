@@ -101,7 +101,7 @@ For the leading candidate, identify:
 - Operational complexity
 - Security surface
 
-If the design warrants deep adversarial review, delegate to `system-design-intelligence:design-critic` or suggest `/adversarial-review`.
+If the design warrants deep adversarial review, delegate to `system-design-intelligence:systems-design-critic` or suggest `/adversarial-review`.
 
 Present risks ranked by severity. Ask: **"Which of these risks are acceptable? Which need mitigation in the design?"**
 
@@ -140,11 +140,11 @@ If greenfield:
 
 ### Phase 8: Document the Design
 
-When the user approves the design, delegate to `system-design-intelligence:design-writer`:
+When the user approves the design, delegate to `system-design-intelligence:systems-design-writer`:
 
 ```
 delegate(
-  agent="system-design-intelligence:design-writer",
+  agent="system-design-intelligence:systems-design-writer",
   instruction="Write the design document for [topic]. Include: [summary of all validated sections]",
   context_depth="all",
   context_scope="agents"

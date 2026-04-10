@@ -44,7 +44,7 @@ full 6-step workflow, delegation patterns, and user validation checkpoints.
 
 | Agent | Role | Steps |
 |-------|------|-------|
-| `design-critic` | Adversarial review from 5 perspectives | 3 (Option A) |
+| `systems-design-critic` | Adversarial review from 5 perspectives | 3 (Option A) |
 | `systems-architect` | System-level assessment (ASSESS mode) | 2 (codebase evaluation) |
 
 ## Skills

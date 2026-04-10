@@ -1,6 +1,6 @@
 ---
 name: adversarial-review
-description: "Adversarial review of a system design from 5 critical perspectives -- SRE, security, staff engineer, finance, and operator. Produces a unified risk assessment. Use for INTERACTIVE on-demand reviews during a design conversation (/adversarial-review). For RECIPE-DRIVEN reviews (where prior step context is needed), use the design-critic agent instead."
+description: "Adversarial review of a system design from 5 critical perspectives -- SRE, security, staff engineer, finance, and operator. Produces a unified risk assessment. Use for INTERACTIVE on-demand reviews during a design conversation (/adversarial-review). For RECIPE-DRIVEN reviews (where prior step context is needed), use the systems-design-critic agent instead."
 context: fork
 disable-model-invocation: true
 user-invocable: true

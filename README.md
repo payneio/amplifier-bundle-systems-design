@@ -26,8 +26,8 @@ amplifier bundle add git+https://github.com/<org>/amplifier-system-design@main#s
 │   └── system-design.yaml        # Wiring layer: hooks, tools, agents, context
 ├── agents/
 │   ├── systems-architect.md      # Deep reasoning (model_role: reasoning)
-│   ├── design-critic.md          # Adversarial review (model_role: critique)
-│   └── design-writer.md          # Document generation (model_role: writing)
+│   ├── systems-design-critic.md    # Adversarial review (model_role: critique)
+│   └── systems-design-writer.md   # Document generation (model_role: writing)
 ├── context/
 │   ├── instructions.md           # Detection + routing standing orders
 │   ├── system-design-principles.md  # 6 thinking tools
@@ -63,7 +63,7 @@ This bundle uses all seven Amplifier mechanisms. Each has a specific role:
 | Mechanism | Instances | Purpose |
 |-----------|-----------|---------|
 | **Modes** | `/design`, `/design-review` | Tool policy enforcement during design phases |
-| **Agents** | `systems-architect`, `design-critic`, `design-writer` | Isolated sub-sessions with focused model roles |
+| **Agents** | `systems-architect`, `systems-design-critic`, `systems-design-writer` | Isolated sub-sessions with focused model roles |
 | **Skills** | 5 (1 fork, 4 inline) | On-demand design expertise |
 | **Recipes** | 3 | Multi-step workflows with checkpointing |
 | **Hooks** | `hooks-design-context` | Ambient design doc awareness |
@@ -133,11 +133,11 @@ Delegate directly to specialist agents:
 delegate(agent="system-design-intelligence:systems-architect",
          instruction="Analyze the authentication architecture in src/auth/")
 
-delegate(agent="system-design-intelligence:design-critic",
+delegate(agent="system-design-intelligence:systems-design-critic",
          instruction="Review this design document for blind spots",
          context_depth="recent")
 
-delegate(agent="system-design-intelligence:design-writer",
+delegate(agent="system-design-intelligence:systems-design-writer",
          instruction="Write the design document from the analysis above",
          context_scope="agents")
 ```

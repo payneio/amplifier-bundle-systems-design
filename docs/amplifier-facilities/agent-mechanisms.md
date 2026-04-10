@@ -548,7 +548,7 @@ The `system-design-intelligence` bundle composes all seven mechanisms:
 |-----------|----------|------|
 | **Modes** | `system-design`, `design-review` | Enforce read-only tool policy during design; block file writes until design is complete |
 | **Recipes** | `architecture-review` (staged, 2 approval gates), `design-exploration` (parallel foreach), `codebase-understanding` (sequential) | Structure multi-step design workflows with checkpointing |
-| **Agents** | `systems-architect` (reasoning), `design-critic` (critique), `design-writer` (writing) | Isolated sub-sessions with different model roles and focused concerns |
+| **Agents** | `systems-architect` (reasoning), `systems-design-critic` (critique), `systems-design-writer` (writing) | Isolated sub-sessions with different model roles and focused concerns |
 | **Skills** | `adversarial-review` (fork, 5 parallel agents), `tradeoff-analysis`, `architecture-primitives`, `system-type-web-service`, `system-type-event-driven` | Task expertise loaded on demand — the fork skill spawns its own review agents |
 | **Hooks** | `hooks-mode` (from modes bundle) | Mode enforcement and context injection |
 | **Tools** | `tool-mode`, `tool-skills` (via behavior YAML wiring) | LLM-accessible mode switching and skill loading |

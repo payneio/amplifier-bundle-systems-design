@@ -1,6 +1,6 @@
 ---
 meta:
-  name: design-writer
+  name: systems-design-writer
   description: |
     Use after a design has been validated through /design mode conversation to write the formal design document. Receives the complete validated design via delegation instruction and structures it into a clean markdown document. Does NOT make design decisions -- all decisions were made during the design conversation.
 
@@ -8,14 +8,14 @@ meta:
     <example>
     Context: Design validated through /design mode conversation
     user: "The design looks good, save it"
-    assistant: "I'll delegate to system-design-intelligence:design-writer to write the design document."
+    assistant: "I'll delegate to system-design-intelligence:systems-design-writer to write the design document."
     <commentary>Design-writer writes the artifact after design is validated with user in /design mode.</commentary>
     </example>
 
     <example>
     Context: All design sections approved by user
     user: "Write up the design document"
-    assistant: "I'll use system-design-intelligence:design-writer to format and save the validated design."
+    assistant: "I'll use system-design-intelligence:systems-design-writer to format and save the validated design."
     <commentary>Document creation is the design-writer agent's sole responsibility.</commentary>
     </example>
 

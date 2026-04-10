@@ -11,7 +11,7 @@ Companion skill for the `/design-review` mode. The mode gates tools; this skill 
 
 **You handle the CONVERSATION. Agents handle the ANALYSIS.**
 
-You guide the user through the review, synthesize findings, and facilitate decisions. For deep analysis work, delegate to `system-design-intelligence:design-critic` or use the `adversarial-review` skill.
+You guide the user through the review, synthesize findings, and facilitate decisions. For deep analysis work, delegate to `system-design-intelligence:systems-design-critic` or use the `adversarial-review` skill.
 
 ## Step Flow
 
@@ -36,10 +36,10 @@ If reviewing an existing system or a design that modifies one:
 
 Delegate the deep adversarial review rather than doing it inline:
 
-**Option A -- Delegate to the design-critic agent:**
+**Option A -- Delegate to the system-design-critic agent:**
 ```
 delegate(
-  agent="system-design-intelligence:design-critic",
+  agent="system-design-intelligence:system-design-critic",
   instruction="Review this design: [design content or file path]. System context: [relevant codebase findings from Step 2]",
   context_depth="recent",
   context_scope="agents"

@@ -24,7 +24,7 @@ mode:
       - bash
     block:
       # Write tools blocked -- this mode produces design thinking, not files.
-      # File creation is delegated to design-writer in Phase 8.
+      # File creation is delegated to systems-design-writer in Phase 8.
       - write_file
       - edit_file
       - apply_patch
@@ -36,7 +36,7 @@ mode:
 # System Design Mode
 
 Structured design exploration. Write tools are blocked -- this mode produces
-design thinking, not files. Document creation is delegated to `design-writer`.
+design thinking, not files. Document creation is delegated to `systems-design-writer`.
 
 **Companion skill:** `system-design-methodology` -- load it at mode entry for the
 full 8-phase workflow, delegation patterns, and user validation checkpoints.
@@ -46,8 +46,8 @@ full 8-phase workflow, delegation patterns, and user validation checkpoints.
 | Agent | Role | Phases |
 |-------|------|--------|
 | `systems-architect` | System-level reasoning (ANALYZE / DESIGN / ASSESS) | 1, 3, 4, 6 |
-| `design-critic` | Adversarial review from 5 perspectives | 5 (optional) |
-| `design-writer` | Pure document production, zero design decisions | 8 |
+| `systems-design-critic` | Adversarial review from 5 perspectives | 5 (optional) |
+| `systems-design-writer` | Pure document production, zero design decisions | 8 |
 
 ## Skills
 

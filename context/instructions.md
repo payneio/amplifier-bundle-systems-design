@@ -64,7 +64,7 @@ Not every design question needs the full pipeline. Match the approach to the sco
 
 **Agents:**
 - `systems-architect` -- system-level design (ANALYZE, DESIGN, ASSESS modes)
-- `design-critic` -- adversarial review from 5 perspectives (for recipe/delegation use)
-- `design-writer` -- writes validated designs to documents
+- `systems-design-critic` -- adversarial review from 5 perspectives (for recipe/delegation use)
+- `systems-design-writer` -- writes validated designs to documents
 
 </STANDING-ORDER>

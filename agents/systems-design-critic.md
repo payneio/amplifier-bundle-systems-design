@@ -1,6 +1,6 @@
 ---
 meta:
-  name: design-critic
+  name: systems-design-critic
   description: |
     Use to stress-test a design before committing to it. Reviews from 5 adversarial perspectives (SRE, security, staff engineer, finance, operator) and produces a severity-ranked risk assessment. Finds flaws -- does NOT generate alternative designs.
 
@@ -10,7 +10,7 @@ meta:
     <example>
     Context: Design completed, needs review before implementation
     user: "Review the notification system design for risks"
-    assistant: "I'll delegate to system-design-intelligence:design-critic to stress-test this design from 5 adversarial perspectives."
+    assistant: "I'll delegate to system-design-intelligence:systems-design-critic to stress-test this design from 5 adversarial perspectives."
     <commentary>
     Completed designs should be reviewed by the critic before proceeding to implementation planning.
     </commentary>
@@ -19,7 +19,7 @@ meta:
     <example>
     Context: Evaluating a proposed architectural change
     user: "What could go wrong with switching to event sourcing?"
-    assistant: "I'll use system-design-intelligence:design-critic to identify risks and failure modes in this approach."
+    assistant: "I'll use system-design-intelligence:systems-design-critic to identify risks and failure modes in this approach."
     <commentary>
     Risk identification for proposed changes triggers the critic's multi-perspective review.
     </commentary>

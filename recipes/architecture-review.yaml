@@ -13,7 +13,7 @@ tags: ["architecture", "review", "system-design", "staged", "approval-gates"]
 #
 # Typical runtime: 10-20 minutes (includes approval wait times)
 # Required agents: foundation:explorer, system-design-intelligence:systems-architect,
-#                  system-design-intelligence:design-critic, system-design-intelligence:design-writer
+#                  system-design-intelligence:systems-design-critic, system-design-intelligence:system-design-writer
 #
 # Usage:
 #   Execute recipe with target_path=<path-to-codebase>
@@ -124,7 +124,7 @@ stages:
         timeout: 600
 
       - id: "synthesize-risks"
-        agent: "system-design-intelligence:design-critic"
+        agent: "system-design-intelligence:systems-design-critic"
         prompt: |
           Synthesize these multi-perspective architecture analyses into a unified risk assessment:
 
@@ -159,7 +159,7 @@ stages:
         Deny to stop and review the analysis manually.
     steps:
       - id: "write-report"
-        agent: "system-design-intelligence:design-writer"
+        agent: "system-design-intelligence:systems-design-writer"
         prompt: |
           Write the architecture review document for the system at {{target_path}}.
 

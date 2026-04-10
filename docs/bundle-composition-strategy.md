@@ -188,7 +188,7 @@ tokens when actually spawned. So "keeping" them costs nothing.
 | Agent | Role | model_role |
 |-------|------|-----------|
 | systems-architect | System-level design, topology, technology selection | [reasoning, general] |
-| design-critic | Multi-perspective adversarial review | [critique, reasoning, general] |
+| systems-design-critic | Multi-perspective adversarial review | [critique, reasoning, general] |
 | constraint-analyst | Constraint discovery and tradeoff evaluation | [reasoning, general] |
 | codebase-surveyor | Architecture-focused codebase understanding | general |
 
@@ -203,8 +203,8 @@ A user working with our bundle would experience:
 3. In `/design` mode -- write tools blocked, agent follows our structured design
    process (model system, multiscale reasoning, tradeoff analysis, alternatives)
 4. Agent delegates to `systems-architect` for deep analysis, `explorer` for
-   codebase survey, `design-critic` for adversarial review
-5. When design is validated section-by-section -- delegates to a design-writer
+   codebase survey, `systems-design-critic` for adversarial review
+5. When design is validated section-by-section -- delegates to a systems-design-writer
    agent to produce the artifact (following superpowers' hybrid pattern)
 6. User transitions to `/brainstorm` or `/execute-plan` (superpowers, if composed)
    for implementation details
