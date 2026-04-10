@@ -2,7 +2,7 @@
 
 ## Goal
 
-Build a `system-design-intelligence` bundle that materially improves how an
+Build a `systems-design` bundle that materially improves how an
 AI agent approaches system design work -- for both new and existing codebases.
 
 The bundle should make the agent behave more like a strong systems architect:
@@ -45,7 +45,7 @@ Create the minimal bundle structure that loads and runs on foundation.
 
 - Create the repository structure:
   ```
-  system-design-intelligence/
+  systems-design/
     bundle.md                    # Root bundle (thin, includes foundation)
     behaviors/
       system-design.yaml         # Core behavior wiring

@@ -57,4 +57,4 @@ Wait for all five agents to complete. Then produce a unified risk assessment usi
 
 ---
 
-@system-design-intelligence:context/adversarial-perspectives.md
+@systems-design:context/adversarial-perspectives.md

@@ -2,7 +2,7 @@
 
 > **Execution:** Use the subagent-driven-development workflow to implement this plan.
 
-**Goal:** Add three specialist agents to the system-design-intelligence bundle — a systems architect, a design critic, and a design writer — then wire them into the behavior YAML and update the /design mode to delegate to the design-writer instead of foundation:zen-architect.
+**Goal:** Add three specialist agents to the systems-design bundle — a systems architect, a design critic, and a design writer — then wire them into the behavior YAML and update the /design mode to delegate to the design-writer instead of foundation:zen-architect.
 
 **Architecture:** The agents follow the "context sink" pattern — each carries heavy design reference docs in its own context window via @mentions, keeping the root session lightweight. Three agents with distinct roles: systems-architect (reasoning, no writes), design-critic (critique, read-only), design-writer (artifact creation, has writes). All use `meta:` YAML frontmatter (not `bundle:`), live in `agents/`, and are registered via `agents: include:` in the behavior YAML.
 
@@ -22,9 +22,9 @@ Open `behaviors/system-design.yaml`. Insert the following block between the `too
 ```yaml
 agents:
   include:
-    - system-design-intelligence:systems-architect
-    - system-design-intelligence:design-critic
-    - system-design-intelligence:design-writer
+    - systems-design:systems-architect
+    - systems-design:design-critic
+    - systems-design:design-writer
 ```
 
 The file should look like this after editing (showing the end of the tools section through the context section):
@@ -38,15 +38,15 @@ The file should look like this after editing (showing the end of the tools secti
 
 agents:
   include:
-    - system-design-intelligence:systems-architect
-    - system-design-intelligence:design-critic
-    - system-design-intelligence:design-writer
+    - systems-design:systems-architect
+    - systems-design:design-critic
+    - systems-design:design-writer
 
 context:
   include:
-    - system-design-intelligence:context/system-design-principles.md
-    - system-design-intelligence:context/structured-design-template.md
-    - system-design-intelligence:context/instructions.md
+    - systems-design:context/system-design-principles.md
+    - systems-design:context/structured-design-template.md
+    - systems-design:context/instructions.md
 ```
 
 **Step 2: Verify YAML is valid**
@@ -89,7 +89,7 @@ meta:
     <example>
     Context: User needs to design a new system or major feature
     user: "We need to design a notification system that handles email, SMS, and push"
-    assistant: "I'll delegate to system-design-intelligence:systems-architect to model the system, explore architectural alternatives, and produce a design."
+    assistant: "I'll delegate to systems-design:systems-architect to model the system, explore architectural alternatives, and produce a design."
     <commentary>
     System-level design requests trigger ANALYZE mode to model the system, then DESIGN mode to explore alternatives with tradeoff analysis.
     </commentary>
@@ -98,7 +98,7 @@ meta:
     <example>
     Context: Evaluating an existing system's architecture
     user: "Review our current payment processing architecture for scaling issues"
-    assistant: "I'll use system-design-intelligence:systems-architect in ASSESS mode to evaluate the existing architecture."
+    assistant: "I'll use systems-design:systems-architect in ASSESS mode to evaluate the existing architecture."
     <commentary>
     Requests to evaluate existing systems trigger ASSESS mode for boundary identification, coupling analysis, and bottleneck detection.
     </commentary>
@@ -107,7 +107,7 @@ meta:
     <example>
     Context: Technology or approach selection with tradeoffs
     user: "Should we use event sourcing or traditional CRUD for our order system?"
-    assistant: "I'll delegate to system-design-intelligence:systems-architect to analyze both approaches against our constraints."
+    assistant: "I'll delegate to systems-design:systems-architect to analyze both approaches against our constraints."
     <commentary>
     Technology selection decisions trigger DESIGN mode with multi-alternative comparison using the 8-dimension tradeoff frame.
     </commentary>
@@ -271,9 +271,9 @@ Structure your design output using the structured design template. Every design 
 
 ---
 
-@system-design-intelligence:context/system-design-principles.md
+@systems-design:context/system-design-principles.md
 
-@system-design-intelligence:context/structured-design-template.md
+@systems-design:context/structured-design-template.md
 
 @foundation:context/shared/common-agent-base.md
 ````
@@ -298,8 +298,8 @@ assert 'tool-bash' not in tool_names, 'systems-architect must NOT have bash'
 print('systems-architect frontmatter valid')
 "
 # Verify @mentions reference files that exist
-grep -o '@system-design-intelligence:context/[^ ]*' agents/systems-architect.md | while read ref; do
-  path=$(echo "$ref" | sed 's|@system-design-intelligence:||')
+grep -o '@systems-design:context/[^ ]*' agents/systems-architect.md | while read ref; do
+  path=$(echo "$ref" | sed 's|@systems-design:||')
   [ -f "$path" ] && echo "OK: $ref" || echo "MISSING: $ref -> $path"
 done
 ```
@@ -307,8 +307,8 @@ done
 Expected:
 ```
 systems-architect frontmatter valid
-OK: @system-design-intelligence:context/system-design-principles.md
-OK: @system-design-intelligence:context/structured-design-template.md
+OK: @systems-design:context/system-design-principles.md
+OK: @systems-design:context/structured-design-template.md
 ```
 
 **Step 3: Commit**
@@ -343,7 +343,7 @@ meta:
     <example>
     Context: Design completed, needs review before implementation
     user: "Review the notification system design for risks"
-    assistant: "I'll delegate to system-design-intelligence:design-critic to stress-test this design from 5 adversarial perspectives."
+    assistant: "I'll delegate to systems-design:design-critic to stress-test this design from 5 adversarial perspectives."
     <commentary>
     Completed designs should be reviewed by the critic before proceeding to implementation planning.
     </commentary>
@@ -352,7 +352,7 @@ meta:
     <example>
     Context: Evaluating a proposed architectural change
     user: "What could go wrong with switching to event sourcing?"
-    assistant: "I'll use system-design-intelligence:design-critic to identify risks and failure modes in this approach."
+    assistant: "I'll use systems-design:design-critic to identify risks and failure modes in this approach."
     <commentary>
     Risk identification for proposed changes triggers the critic's multi-perspective review.
     </commentary>
@@ -464,7 +464,7 @@ Top 3–5 actions to take before proceeding, ordered by risk reduction.
 
 ---
 
-@system-design-intelligence:context/system-design-principles.md
+@systems-design:context/system-design-principles.md
 
 @foundation:context/shared/common-agent-base.md
 ````
@@ -522,14 +522,14 @@ meta:
     <example>
     Context: Design validated through /design mode conversation
     user: "The design looks good, save it"
-    assistant: "I'll delegate to system-design-intelligence:design-writer to write the design document."
+    assistant: "I'll delegate to systems-design:design-writer to write the design document."
     <commentary>Design-writer writes the artifact after design is validated with user in /design mode.</commentary>
     </example>
 
     <example>
     Context: All design sections approved by user
     user: "Write up the design document"
-    assistant: "I'll use system-design-intelligence:design-writer to format and save the validated design."
+    assistant: "I'll use systems-design:design-writer to format and save the validated design."
     <commentary>Document creation is the design-writer agent's sole responsibility.</commentary>
     </example>
 
@@ -618,7 +618,7 @@ If you catch yourself doing any of these, stop:
 
 ---
 
-@system-design-intelligence:context/structured-design-template.md
+@systems-design:context/structured-design-template.md
 
 @foundation:context/shared/common-agent-base.md
 ````
@@ -674,7 +674,7 @@ Agent's role: When it's time to CREATE THE DESIGN DOCUMENT, you MUST delegate to
 ```
 To:
 ```
-Agent's role: When it's time to CREATE THE DESIGN DOCUMENT, you MUST delegate to `system-design-intelligence:design-writer`. The writer agent writes the artifact. You do not write files.
+Agent's role: When it's time to CREATE THE DESIGN DOCUMENT, you MUST delegate to `systems-design:design-writer`. The writer agent writes the artifact. You do not write files.
 ```
 
 **Replacement 2 — Line 165** (the delegate call in Phase 8):
@@ -685,7 +685,7 @@ Change:
 ```
 To:
 ```
-  agent="system-design-intelligence:design-writer",
+  agent="systems-design:design-writer",
 ```
 
 **Replacement 3 — Line 205** (anti-rationalization table row):
@@ -696,7 +696,7 @@ Change:
 ```
 To:
 ```
-| "I can just write the design doc myself" | You CANNOT. write_file is blocked. Delegate to system-design-intelligence:design-writer. This is the architecture. |
+| "I can just write the design doc myself" | You CANNOT. write_file is blocked. Delegate to systems-design:design-writer. This is the architecture. |
 ```
 
 **Step 2: Verify all references updated**
@@ -707,7 +707,7 @@ cd /data/labs/amplifier-system-design
 # Should find 0 references to zen-architect
 grep -n 'foundation:zen-architect' modes/design.md && echo "FAIL: old references remain" || echo "PASS: no old references"
 # Should find 3 references to design-writer
-count=$(grep -c 'system-design-intelligence:design-writer' modes/design.md)
+count=$(grep -c 'systems-design:design-writer' modes/design.md)
 [ "$count" -eq 3 ] && echo "PASS: 3 new references found" || echo "FAIL: expected 3 references, found $count"
 ```
 
@@ -762,7 +762,7 @@ Expected output should show:
 - 3 files in `agents/`: `design-critic.md`, `design-writer.md`, `systems-architect.md`
 - Agent names matching file names
 - 3 agents registered in behavior YAML
-- All mode references pointing to `system-design-intelligence:design-writer` (no `zen-architect`)
+- All mode references pointing to `systems-design:design-writer` (no `zen-architect`)
 
 **Step 2: Verify all @mention targets exist**
 
@@ -772,8 +772,8 @@ cd /data/labs/amplifier-system-design
 echo "=== Checking @mentions resolve ==="
 for f in agents/*.md; do
   echo "--- $f ---"
-  grep -o '@system-design-intelligence:[^ ]*' "$f" | while read ref; do
-    path=$(echo "$ref" | sed 's|@system-design-intelligence:||')
+  grep -o '@systems-design:[^ ]*' "$f" | while read ref; do
+    path=$(echo "$ref" | sed 's|@systems-design:||')
     [ -f "$path" ] && echo "  OK: $ref" || echo "  MISSING: $ref -> $path"
   done
 done
@@ -874,5 +874,5 @@ Expected file listing should include:
 Checkpoint 4 is complete. The bundle now has:
 - **3 agents**: systems-architect (reasoning, no bash), design-critic (critique, read-only), design-writer (writing, has bash)
 - **Behavior wiring**: all 3 registered in `behaviors/system-design.yaml`
-- **Mode integration**: /design mode delegates to `system-design-intelligence:design-writer` instead of `foundation:zen-architect`
+- **Mode integration**: /design mode delegates to `systems-design:design-writer` instead of `foundation:zen-architect`
 - **Context sink pattern**: each agent @mentions the reference docs it needs, loading them in its own context window

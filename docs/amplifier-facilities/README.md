@@ -1,7 +1,7 @@
 # Amplifier Extension Facilities: Research Index
 
 Research documents investigating how Amplifier extends agent capabilities and how
-each mechanism relates to building a system-design-intelligence bundle.
+each mechanism relates to building a systems-design bundle.
 
 ## Facilities Investigated
 

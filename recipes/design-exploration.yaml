@@ -1,4 +1,4 @@
-name: "systems-design-exploration"
+name: "design-exploration"
 description: "Explore 3 architectural alternatives in parallel, evaluate against tradeoff framework, and synthesize a recommendation"
 version: "1.0.0"
 author: "System Design Intelligence"
@@ -43,7 +43,7 @@ steps:
       Build a system map:
       1. **Goals**: What must this system accomplish? What does success look like?
       2. **Constraints**: What is fixed? (Include both stated constraints and discovered ones)
-      3. **Actors**: Who and what interacts with this system?
+      3. **Actors**: Who and what interacts with this system?1
       4. **Interfaces**: Where are the boundaries? What crosses them?
       5. **Failure modes**: What are the most likely and most dangerous failures?
       6. **Time horizons**: What matters now vs. in 6 months vs. in 3 years?

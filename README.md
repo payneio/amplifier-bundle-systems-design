@@ -1,4 +1,4 @@
-# system-design-intelligence
+# systems-design
 
 An Amplifier bundle that provides a structured systems design methodology for agentic development. Produces rigorous architectural output with tradeoff analysis, multiscale reasoning, and failure mode coverage.
 
@@ -101,17 +101,17 @@ Run multi-step workflows with agent handoffs:
 ```python
 # Architecture review (staged, 2 approval gates)
 recipes(operation="execute",
-        recipe_path="@system-design-intelligence:recipes/systems-design-review.yaml",
+        recipe_path="@systems-design:recipes/systems-design-review.yaml",
         context={"target_path": "src/", "focus_areas": "authentication, caching"})
 
 # Design exploration (parallel 3-archetype generation)
 recipes(operation="execute",
-        recipe_path="@system-design-intelligence:recipes/systems-design-exploration.yaml",
+        recipe_path="@systems-design:recipes/systems-design-exploration.yaml",
         context={"problem_statement": "How should we handle user sessions at scale?"})
 
 # Codebase understanding (sequential survey)
 recipes(operation="execute",
-        recipe_path="@system-design-intelligence:recipes/codebase-understanding.yaml",
+        recipe_path="@systems-design:recipes/codebase-understanding.yaml",
         context={"target_path": "src/"})
 ```
 
@@ -130,14 +130,14 @@ load_skill(skill_name="adversarial-review")     # Fork: spawns 5 parallel review
 Delegate directly to specialist agents:
 
 ```python
-delegate(agent="system-design-intelligence:systems-architect",
+delegate(agent="systems-design:systems-architect",
          instruction="Analyze the authentication architecture in src/auth/")
 
-delegate(agent="system-design-intelligence:systems-design-critic",
+delegate(agent="systems-design:systems-design-critic",
          instruction="Review this design document for blind spots",
          context_depth="recent")
 
-delegate(agent="system-design-intelligence:systems-design-writer",
+delegate(agent="systems-design:systems-design-writer",
          instruction="Write the design document from the analysis above",
          context_scope="agents")
 ```
@@ -180,7 +180,7 @@ Create a `.md` file under `agents/` with `meta:` frontmatter. Add it to the `age
 
 ### Adding a new recipe
 
-Create a `.yaml` file under `recipes/`. Reference your agents by their namespaced names (`system-design-intelligence:systems-architect`).
+Create a `.yaml` file under `recipes/`. Reference your agents by their namespaced names (`systems-design:systems-architect`).
 
 ### The hook module
 

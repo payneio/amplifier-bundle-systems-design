@@ -1,6 +1,6 @@
 We are exploring improving the systems design capabilities of an agentic system. For background, read https://payne.io/posts/intelligent-design and ./agentic-system-design.md.
 
-The system we will be working to improve is https://github.com/microsoft/amplifier. Amplifier is an agentic ecosystem where the agent loop is enhanced with additional capabilities using "bundles". We will be creating a new "system-design-intelligence" bundle.
+The system we will be working to improve is https://github.com/microsoft/amplifier. Amplifier is an agentic ecosystem where the agent loop is enhanced with additional capabilities using "bundles". We will be creating a new "systems-design" bundle.
 
 Some initial thoughts on how we might start breaking up this work are included in ./investigation.md.
 

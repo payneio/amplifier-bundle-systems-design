@@ -2,7 +2,7 @@
 
 > **Execution:** Use the subagent-driven-development workflow to implement this plan.
 
-**Goal:** Create a working `system-design-intelligence` Amplifier bundle that loads system design methodology into root context and produces structured design output.
+**Goal:** Create a working `systems-design` Amplifier bundle that loads system design methodology into root context and produces structured design output.
 
 **Architecture:** Thin bundle on foundation — includes `amplifier-foundation` for all infrastructure (tools, orchestrator, hooks, agents), adds our own context files establishing system design methodology. A behavior YAML wires context into the root session. The bundle.md is the entry point with YAML frontmatter (includes, session config) and a markdown body with `@mentions` for context injection.
 
@@ -22,22 +22,22 @@ Create `bundle.md` with this exact content:
 ```markdown
 ---
 bundle:
-  name: system-design-intelligence
+  name: systems-design
   version: 0.1.0
   description: Systems design methodology for agentic development — structured design output with tradeoff analysis, multiscale reasoning, and failure mode coverage.
 
 includes:
   - bundle: git+https://github.com/microsoft/amplifier-foundation@main
-  - bundle: system-design-intelligence:behaviors/system-design
+  - bundle: systems-design:behaviors/system-design
 ---
 
 # System Design Intelligence
 
 You have access to a systems design methodology that produces structured, rigorous architectural output.
 
-@system-design-intelligence:context/system-design-principles.md
-@system-design-intelligence:context/structured-design-template.md
-@system-design-intelligence:context/instructions.md
+@systems-design:context/system-design-principles.md
+@systems-design:context/structured-design-template.md
+@systems-design:context/instructions.md
 
 ---
 
@@ -72,9 +72,9 @@ bundle:
 
 context:
   include:
-    - system-design-intelligence:context/system-design-principles.md
-    - system-design-intelligence:context/structured-design-template.md
-    - system-design-intelligence:context/instructions.md
+    - systems-design:context/system-design-principles.md
+    - systems-design:context/structured-design-template.md
+    - systems-design:context/instructions.md
 ```
 
 This follows the exact pattern from `related-projects/amplifier-bundle-superpowers/behaviors/superpowers-methodology.yaml` — a behavior YAML with `bundle` metadata and `context.include` entries. For Checkpoint 1, we only need context wiring. Agents, modes, skills, hooks, and tools will be added in later checkpoints.

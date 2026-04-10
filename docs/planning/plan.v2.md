@@ -1,6 +1,6 @@
 _Better systems design bundle: new and existing codebases_
 
-Create a `system-design-intelligence` bundle. Thin bundle on foundation -- get infrastructure for free, replace instruction and design content with our own. zen-architect stays available for module-level work; our bundle operates at system level above it.
+Create a `systems-design` bundle. Thin bundle on foundation -- get infrastructure for free, replace instruction and design content with our own. zen-architect stays available for module-level work; our bundle operates at system level above it.
 
 Work is organized into checkpoints. Each ships something usable.
 

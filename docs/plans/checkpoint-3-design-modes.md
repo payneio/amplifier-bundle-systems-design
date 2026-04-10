@@ -2,7 +2,7 @@
 
 > **Execution:** Use the subagent-driven-development workflow to implement this plan.
 
-**Goal:** Add two interactive modes (`/design` and `/design-review`) to the system-design-intelligence bundle, giving users a structured 8-phase design workflow that blocks writes and enforces rigorous systems thinking before artifact creation.
+**Goal:** Add two interactive modes (`/design` and `/design-review`) to the systems-design bundle, giving users a structured 8-phase design workflow that blocks writes and enforces rigorous systems thinking before artifact creation.
 
 **Architecture:** Two markdown mode files with YAML frontmatter define tool policies and inject process guidance into the agent's system prompt. The modes infrastructure (hooks-mode for enforcement + tool-mode for programmatic transitions) is wired into the existing behavior YAML. The `/design` mode follows the superpowers hybrid pattern: conversation happens in-mode, artifact creation is delegated to an agent. `/design-review` is a lighter read-only evaluation mode.
 
@@ -41,7 +41,7 @@ includes:
 
 # Mode hook to discover system-design modes (design, design-review)
 # TODO: When published to git, replace absolute path with:
-#   "@system-design-intelligence:modes"
+#   "@systems-design:modes"
 # or a git+https:// URL. The @namespace syntax does not resolve at mount time.
 hooks:
   - module: hooks-mode
@@ -65,9 +65,9 @@ tools:
 
 context:
   include:
-    - system-design-intelligence:context/system-design-principles.md
-    - system-design-intelligence:context/structured-design-template.md
-    - system-design-intelligence:context/instructions.md
+    - systems-design:context/system-design-principles.md
+    - systems-design:context/structured-design-template.md
+    - systems-design:context/instructions.md
 ```
 
 This adds three new sections to the existing YAML:
@@ -196,7 +196,7 @@ Present the system map to the user. Ask: "Does this map capture the system corre
 
 Do NOT proceed to solutions until the system map is validated. A weak designer jumps to answers. A strong designer first builds a map.
 
-@system-design-intelligence:context/system-design-principles.md
+@systems-design:context/system-design-principles.md
 
 ### Phase 3: Ask Questions One at a Time
 
@@ -242,7 +242,7 @@ Present the evaluation to the user. This is where hidden costs and second-order 
 
 Present the design using the structured template, one section at a time:
 
-@system-design-intelligence:context/structured-design-template.md
+@systems-design:context/structured-design-template.md
 
 - Present each section in 200-300 words
 - After EACH section, ask: "Does this look right so far?"
@@ -665,7 +665,7 @@ The design mode body should contain @mentions to our context files. Verify they 
 
 Run:
 ```bash
-grep -n '@system-design-intelligence:' modes/design.md
+grep -n '@systems-design:' modes/design.md
 ls -la context/system-design-principles.md context/structured-design-template.md
 ```
 

@@ -110,7 +110,7 @@ Real examples from foundation:
 
 ## Relevance to System Design Bundle
 
-The bundle is our primary delivery mechanism. Our system-design-intelligence
+The bundle is our primary delivery mechanism. Our systems-design
 bundle will be structured as a thin bundle that includes foundation and adds:
 
 - **Context files** for system design principles, patterns, and practices

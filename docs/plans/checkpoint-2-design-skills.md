@@ -2,7 +2,7 @@
 
 > **Execution:** Use the subagent-driven-development workflow to implement this plan.
 
-**Goal:** Add 5 skills to the system-design-intelligence bundle so the agent can load specialized design knowledge on demand without paying token cost on every turn.
+**Goal:** Add 5 skills to the systems-design bundle so the agent can load specialized design knowledge on demand without paying token cost on every turn.
 
 **Architecture:** Skills are directories under `skills/` containing a `SKILL.md` file with YAML frontmatter + markdown body. They are discovered by the `tool-skills` module wired into our behavior YAML. Four are inline skills (inject knowledge into current context when loaded). One is a fork skill (spawns an isolated subagent that orchestrates parallel adversarial reviewers via the delegate tool).
 
@@ -45,9 +45,9 @@ bundle:
 
 context:
   include:
-    - system-design-intelligence:context/system-design-principles.md
-    - system-design-intelligence:context/structured-design-template.md
-    - system-design-intelligence:context/instructions.md
+    - systems-design:context/system-design-principles.md
+    - systems-design:context/structured-design-template.md
+    - systems-design:context/instructions.md
 ```
 
 Add a `tools:` section **between** the `bundle:` block and the `context:` block. The complete file should become:
@@ -66,13 +66,13 @@ tools:
     source: git+https://github.com/microsoft/amplifier-module-tool-skills@main
     config:
       skills:
-        - "@system-design-intelligence:skills"
+        - "@systems-design:skills"
 
 context:
   include:
-    - system-design-intelligence:context/system-design-principles.md
-    - system-design-intelligence:context/structured-design-template.md
-    - system-design-intelligence:context/instructions.md
+    - systems-design:context/system-design-principles.md
+    - systems-design:context/structured-design-template.md
+    - systems-design:context/instructions.md
 ```
 
 **Step 3: Create the skills directory with a placeholder**

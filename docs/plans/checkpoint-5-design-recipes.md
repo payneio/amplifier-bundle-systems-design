@@ -3,7 +3,7 @@
 > **Execution:** Use the subagent-driven-development workflow to implement this plan.
 
 **Goal:** Add 3 recipe YAML files that orchestrate multi-step design workflows using our bundle's agents.
-**Architecture:** Recipes are declarative YAML specs executed by the `recipes` tool. We create one staged recipe with approval gates (architecture-review), one flat recipe with parallel foreach (design-exploration), and one flat sequential recipe (codebase-understanding). All three use our agents (`system-design-intelligence:systems-architect`, `system-design-intelligence:design-critic`, `system-design-intelligence:design-writer`) plus the foundation explorer (`foundation:explorer`).
+**Architecture:** Recipes are declarative YAML specs executed by the `recipes` tool. We create one staged recipe with approval gates (architecture-review), one flat recipe with parallel foreach (design-exploration), and one flat sequential recipe (codebase-understanding). All three use our agents (`systems-design:systems-architect`, `systems-design:design-critic`, `systems-design:design-writer`) plus the foundation explorer (`foundation:explorer`).
 **Tech Stack:** Amplifier recipe system (YAML), staged mode with approval gates, foreach parallel execution, context accumulation.
 
 ---
@@ -32,8 +32,8 @@ tags: ["architecture", "review", "system-design", "staged", "approval-gates"]
 # 3. Report: Produce the final architecture review document (approval required)
 #
 # Typical runtime: 10-20 minutes (includes approval wait times)
-# Required agents: foundation:explorer, system-design-intelligence:systems-architect,
-#                  system-design-intelligence:design-critic, system-design-intelligence:design-writer
+# Required agents: foundation:explorer, systems-design:systems-architect,
+#                  systems-design:design-critic, systems-design:design-writer
 #
 # Usage:
 #   Execute recipe with target_path=<path-to-codebase>
@@ -77,7 +77,7 @@ stages:
         timeout: 600
 
       - id: "identify-boundaries"
-        agent: "system-design-intelligence:systems-architect"
+        agent: "systems-design:systems-architect"
         mode: "ANALYZE"
         prompt: |
           Based on this codebase survey: {{codebase_survey}}
@@ -115,7 +115,7 @@ stages:
         Deny to stop and review the reconnaissance findings manually.
     steps:
       - id: "perspective-analysis"
-        agent: "system-design-intelligence:systems-architect"
+        agent: "systems-design:systems-architect"
         mode: "ASSESS"
         prompt: |
           Analyze the architecture from a **{{perspective}}** perspective.
@@ -144,7 +144,7 @@ stages:
         timeout: 600
 
       - id: "synthesize-risks"
-        agent: "system-design-intelligence:design-critic"
+        agent: "systems-design:design-critic"
         prompt: |
           Synthesize these multi-perspective architecture analyses into a unified risk assessment:
 
@@ -179,7 +179,7 @@ stages:
         Deny to stop and review the analysis manually.
     steps:
       - id: "write-report"
-        agent: "system-design-intelligence:design-writer"
+        agent: "systems-design:design-writer"
         prompt: |
           Write the architecture review document for the system at {{target_path}}.
 
@@ -276,8 +276,8 @@ tags: ["design", "exploration", "parallel", "tradeoff-analysis", "system-design"
 # 4. (Optional) Adversarial review of the recommended design
 #
 # Typical runtime: 5-15 minutes
-# Required agents: system-design-intelligence:systems-architect,
-#                  system-design-intelligence:design-critic
+# Required agents: systems-design:systems-architect,
+#                  systems-design:design-critic
 #
 # Usage:
 #   Execute recipe with design_problem="description of what to design"
@@ -294,7 +294,7 @@ context:
 steps:
   # Step 1: Frame the problem
   - id: "frame-problem"
-    agent: "system-design-intelligence:systems-architect"
+    agent: "systems-design:systems-architect"
     mode: "ANALYZE"
     prompt: |
       Frame this design problem for systematic exploration:
@@ -318,7 +318,7 @@ steps:
 
   # Step 2: Generate 3 candidate architectures in parallel
   - id: "generate-candidates"
-    agent: "system-design-intelligence:systems-architect"
+    agent: "systems-design:systems-architect"
     mode: "DESIGN"
     prompt: |
       Design a **{{archetype}}** architecture for this problem:
@@ -357,7 +357,7 @@ steps:
 
   # Step 3: Evaluate all candidates against the 8-dimension tradeoff frame
   - id: "evaluate-tradeoffs"
-    agent: "system-design-intelligence:systems-architect"
+    agent: "systems-design:systems-architect"
     mode: "ASSESS"
     prompt: |
       Evaluate these 3 candidate architectures against the 8-dimension tradeoff frame:
@@ -393,7 +393,7 @@ steps:
 
   # Step 4: Optional adversarial review of the recommendation
   - id: "adversarial-review"
-    agent: "system-design-intelligence:design-critic"
+    agent: "systems-design:design-critic"
     condition: "{{with_adversarial_review}} == 'true'"
     prompt: |
       Review the recommended design from this exploration:
@@ -463,7 +463,7 @@ tags: ["codebase", "understanding", "architecture", "survey", "system-design"]
 # 4. Produce final architectural overview
 #
 # Typical runtime: 5-10 minutes
-# Required agents: foundation:explorer, system-design-intelligence:systems-architect
+# Required agents: foundation:explorer, systems-design:systems-architect
 #
 # Usage:
 #   Execute recipe with target_path=<path-to-codebase>
@@ -498,7 +498,7 @@ steps:
 
   # Step 2: Identify boundaries and coupling
   - id: "identify-boundaries"
-    agent: "system-design-intelligence:systems-architect"
+    agent: "systems-design:systems-architect"
     mode: "ANALYZE"
     prompt: |
       Analyze the codebase at {{target_path}} to identify architectural boundaries and coupling.
@@ -522,7 +522,7 @@ steps:
 
   # Step 3: Map flows and assess complexity
   - id: "map-flows"
-    agent: "system-design-intelligence:systems-architect"
+    agent: "systems-design:systems-architect"
     mode: "ASSESS"
     prompt: |
       Map data and control flows in the codebase at {{target_path}}.
@@ -549,7 +549,7 @@ steps:
 
   # Step 4: Produce the architectural overview
   - id: "architectural-overview"
-    agent: "system-design-intelligence:systems-architect"
+    agent: "systems-design:systems-architect"
     mode: "ASSESS"
     prompt: |
       Produce a final architectural overview for the codebase at {{target_path}}.
@@ -642,7 +642,7 @@ Check that each recipe follows the correct format:
    - Stage 2 (`analysis`) has `approval: required: true`
    - Stage 3 (`report`) has `approval: required: true`
    - The foreach step uses `parallel: 3` and `collect: "perspective_analyses"`
-   - All agent names are fully qualified (`system-design-intelligence:*`, `foundation:explorer`)
+   - All agent names are fully qualified (`systems-design:*`, `foundation:explorer`)
 
 2. `design-exploration.yaml`:
    - Uses `steps:` at the top level

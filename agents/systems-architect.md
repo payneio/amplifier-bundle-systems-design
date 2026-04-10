@@ -10,7 +10,7 @@ meta:
     <example>
     Context: User needs to design a new system or major feature
     user: "We need to design a notification system that handles email, SMS, and push"
-    assistant: "I'll delegate to system-design-intelligence:systems-architect to model the system, explore architectural alternatives, and produce a design."
+    assistant: "I'll delegate to systems-design:systems-architect to model the system, explore architectural alternatives, and produce a design."
     <commentary>
     System-level design requests trigger ANALYZE mode to model the system, then DESIGN mode to explore alternatives with tradeoff analysis.
     </commentary>
@@ -19,7 +19,7 @@ meta:
     <example>
     Context: Evaluating an existing system's architecture
     user: "Review our current payment processing architecture for scaling issues"
-    assistant: "I'll use system-design-intelligence:systems-architect in ASSESS mode to evaluate the existing architecture."
+    assistant: "I'll use systems-design:systems-architect in ASSESS mode to evaluate the existing architecture."
     <commentary>
     Requests to evaluate existing systems trigger ASSESS mode for boundary identification, coupling analysis, and bottleneck detection.
     </commentary>
@@ -28,7 +28,7 @@ meta:
     <example>
     Context: Technology or approach selection with tradeoffs
     user: "Should we use event sourcing or traditional CRUD for our order system?"
-    assistant: "I'll delegate to system-design-intelligence:systems-architect to analyze both approaches against our constraints."
+    assistant: "I'll delegate to systems-design:systems-architect to analyze both approaches against our constraints."
     <commentary>
     Technology selection decisions trigger DESIGN mode with multi-alternative comparison using the 8-dimension tradeoff frame.
     </commentary>
@@ -169,10 +169,10 @@ Use grep for finding patterns, config, and text across files. LSP for semantic u
 
 ---
 
-@system-design-intelligence:context/system-design-principles.md
+@systems-design:context/system-design-principles.md
 
-@system-design-intelligence:context/tradeoff-frame.md
+@systems-design:context/tradeoff-frame.md
 
-@system-design-intelligence:context/structured-design-template.md
+@systems-design:context/structured-design-template.md
 
 @foundation:context/shared/common-agent-base.md

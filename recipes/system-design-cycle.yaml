@@ -1,4 +1,4 @@
-name: "systems-design-cycle"
+name: "system-design-cycle"
 description: "End-to-end system design with approval gates -- problem framing, candidate architectures, risk assessment, refinement, and documentation"
 version: "1.0.0"
 author: "System Design Intelligence"

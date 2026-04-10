@@ -1,5 +1,5 @@
 ---
-name: systems-design-review-methodology
+name: design-review-methodology
 description: "Use when the /systems-design-review mode is active. 6-step design review methodology -- understand the design, evaluate against codebase, adversarial analysis, tradeoff validation, synthesis, and action items. Governs conversation flow, delegation patterns, and user validation checkpoints."
 ---
 

@@ -13,7 +13,7 @@ tags: ["codebase", "understanding", "architecture", "survey", "system-design"]
 # 4. Produce final architectural overview
 #
 # Typical runtime: 5-10 minutes
-# Required agents: foundation:explorer, system-design-intelligence:systems-architect
+# Required agents: foundation:explorer, systems-design:systems-architect
 #
 # Usage:
 #   Execute recipe with target_path=<path-to-codebase>
@@ -48,7 +48,7 @@ steps:
 
   # Step 2: Identify boundaries and coupling
   - id: "identify-boundaries"
-    agent: "system-design-intelligence:systems-architect"
+    agent: "systems-design:systems-architect"
     mode: "ANALYZE"
     prompt: |
       Analyze the codebase at {{target_path}} to identify architectural boundaries and coupling.
@@ -72,7 +72,7 @@ steps:
 
   # Step 3: Map flows and assess complexity
   - id: "map-flows"
-    agent: "system-design-intelligence:systems-architect"
+    agent: "systems-design:systems-architect"
     mode: "ASSESS"
     prompt: |
       Map data and control flows in the codebase at {{target_path}}.
@@ -99,7 +99,7 @@ steps:
 
   # Step 4: Produce the architectural overview
   - id: "architectural-overview"
-    agent: "system-design-intelligence:systems-architect"
+    agent: "systems-design:systems-architect"
     mode: "ASSESS"
     prompt: |
       Produce a final architectural overview for the codebase at {{target_path}}.

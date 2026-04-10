@@ -542,7 +542,7 @@ Ask in order:
 
 ## Practical Example: This Bundle
 
-The `system-design-intelligence` bundle composes all seven mechanisms:
+The `systems-design` bundle composes all seven mechanisms:
 
 | Mechanism | Instance | Role |
 |-----------|----------|------|

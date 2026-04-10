@@ -1,0 +1,328 @@
+// Bundle composition and mechanism relationships for systems-design
+// generated: 2026-04-03
+digraph "systems-design" {
+  graph [
+    fontname="Helvetica"
+    bgcolor="white"
+    rankdir=TB
+    compound=true
+    nodesep=0.6
+    ranksep=0.8
+    label=<<B>systems-design</B><BR/><FONT POINT-SIZE="10">Bundle Mechanism Map</FONT>>
+    labelloc=t
+    fontsize=16
+  ]
+  node [fontname="Helvetica" style=filled fontsize=11]
+  edge [fontname="Helvetica" fontsize=9]
+
+  // ─── BUNDLE ROOT ────────────────────────────────────────────────
+  "bundle.md" [
+    shape=box fillcolor="#4A90D9" fontcolor=white
+    label=<<B>systems-design</B><BR/><FONT POINT-SIZE="9">root bundle</FONT>>
+  ]
+
+  // ─── INCLUDED BUNDLES ───────────────────────────────────────────
+  "foundation" [
+    shape=box fillcolor="#7EB8F7"
+    label=<<B>foundation</B><BR/><FONT POINT-SIZE="9">included bundle</FONT>>
+  ]
+
+  // ─── BEHAVIOR ───────────────────────────────────────────────────
+  subgraph cluster_behavior {
+    label=<<B>Behavior</B>>
+    style=dashed color="#6AAF6A" fontname="Helvetica" fontsize=10
+
+    "system-design-behavior" [
+      shape=component fillcolor="#6AAF6A"
+      label=<<B>system-design</B><BR/><FONT POINT-SIZE="9">behavior</FONT>>
+    ]
+  }
+
+  // ─── EXTERNAL DEPENDENCIES ──────────────────────────────────────
+  subgraph cluster_external {
+    label=<<B>External Dependencies</B>>
+    style=dashed color="#B0B0B0" fontname="Helvetica" fontsize=10
+
+    "modes-behavior" [
+      shape=component fillcolor="#C8E6C8"
+      label=<<B>modes</B><BR/><FONT POINT-SIZE="9">behavior (external)</FONT>>
+    ]
+    "hooks-mode" [
+      shape=hexagon fillcolor="#D9A0D9"
+      label=<<B>hooks-mode</B><BR/><FONT POINT-SIZE="9">mode discovery</FONT>>
+    ]
+    "hooks-design-context" [
+      shape=hexagon fillcolor="#D9A0D9"
+      label=<<B>hooks-design-context</B><BR/><FONT POINT-SIZE="9">design state awareness</FONT>>
+    ]
+    "tool-mode" [
+      shape=cds fillcolor="#B0B0B0"
+      label=<<B>tool-mode</B><BR/><FONT POINT-SIZE="9">mode transitions</FONT>>
+    ]
+    "tool-skills" [
+      shape=cds fillcolor="#B0B0B0"
+      label=<<B>tool-skills</B><BR/><FONT POINT-SIZE="9">skill loading</FONT>>
+    ]
+    "foundation:explorer" [
+      shape=ellipse fillcolor="#E8C8A0"
+      label=<<B>explorer</B><BR/><FONT POINT-SIZE="9">agent (external)</FONT>>
+    ]
+  }
+
+  // ─── CONTEXT FILES ──────────────────────────────────────────────
+  subgraph cluster_context {
+    label=<<B>Context (Shared Knowledge)</B>>
+    style=dashed color="#DAA520" fontname="Helvetica" fontsize=10
+
+    "ctx-instructions" [
+      shape=note fillcolor="#F0E68C"
+      label=<<B>instructions</B><BR/><FONT POINT-SIZE="9">detection + routing ~620t</FONT>>
+    ]
+    "ctx-principles" [
+      shape=note fillcolor="#F0E68C"
+      label=<<B>design principles</B><BR/><FONT POINT-SIZE="9">6 thinking tools ~1270t</FONT>>
+    ]
+    "ctx-tradeoff" [
+      shape=note fillcolor="#F0E68C"
+      label=<<B>tradeoff frame</B><BR/><FONT POINT-SIZE="9">8-dimension matrix ~680t</FONT>>
+    ]
+    "ctx-adversarial" [
+      shape=note fillcolor="#F0E68C"
+      label=<<B>adversarial perspectives</B><BR/><FONT POINT-SIZE="9">5 review lenses ~710t</FONT>>
+    ]
+    "ctx-template" [
+      shape=note fillcolor="#F0E68C"
+      label=<<B>design template</B><BR/><FONT POINT-SIZE="9">structured output ~490t</FONT>>
+    ]
+  }
+
+  // ─── MODES ──────────────────────────────────────────────────────
+  subgraph cluster_modes {
+    label=<<B>Modes (Session Behavior)</B>>
+    style=dashed color="#E07070" fontname="Helvetica" fontsize=10
+
+    "mode-design" [
+      shape=octagon fillcolor="#F0A0A0"
+      label=<<B>/design</B><BR/><FONT POINT-SIZE="9">8-phase exploration ~1420t</FONT>>
+    ]
+    "mode-review" [
+      shape=octagon fillcolor="#F0A0A0"
+      label=<<B>/design-review</B><BR/><FONT POINT-SIZE="9">6-step evaluation ~990t</FONT>>
+    ]
+  }
+
+  // ─── AGENTS ─────────────────────────────────────────────────────
+  subgraph cluster_agents {
+    label=<<B>Agents (Isolated Sub-Tasks)</B>>
+    style=dashed color="#F5A623" fontname="Helvetica" fontsize=10
+
+    "agent-architect" [
+      shape=ellipse fillcolor="#F5A623"
+      label=<<B>systems-architect</B><BR/><FONT POINT-SIZE="9">reasoning ~1930t</FONT>>
+    ]
+    "agent-critic" [
+      shape=ellipse fillcolor="#F5A623"
+      label=<<B>design-critic</B><BR/><FONT POINT-SIZE="9">critique ~970t</FONT>>
+    ]
+    "agent-writer" [
+      shape=ellipse fillcolor="#F5A623"
+      label=<<B>design-writer</B><BR/><FONT POINT-SIZE="9">writing ~740t</FONT>>
+    ]
+  }
+
+  // ─── SKILLS ─────────────────────────────────────────────────────
+  subgraph cluster_skills {
+    label=<<B>Skills (On-Demand Knowledge)</B>>
+    style=dashed color="#20B2AA" fontname="Helvetica" fontsize=10
+
+    "skill-adversarial" [
+      shape=diamond fillcolor="#98E8E0"
+      label=<<B>adversarial-review</B><BR/><FONT POINT-SIZE="9">fork skill ~770t</FONT>>
+    ]
+    "skill-tradeoff" [
+      shape=diamond fillcolor="#98E8E0"
+      label=<<B>tradeoff-analysis</B><BR/><FONT POINT-SIZE="9">inline skill ~1280t</FONT>>
+    ]
+    "skill-primitives" [
+      shape=diamond fillcolor="#98E8E0"
+      label=<<B>architecture-primitives</B><BR/><FONT POINT-SIZE="9">inline skill ~2010t</FONT>>
+    ]
+    "skill-web" [
+      shape=diamond fillcolor="#98E8E0"
+      label=<<B>system-type-web-service</B><BR/><FONT POINT-SIZE="9">inline skill ~1750t</FONT>>
+    ]
+    "skill-events" [
+      shape=diamond fillcolor="#98E8E0"
+      label=<<B>system-type-event-driven</B><BR/><FONT POINT-SIZE="9">inline skill ~2050t</FONT>>
+    ]
+  }
+
+  // ─── RECIPES ────────────────────────────────────────────────────
+  subgraph cluster_recipes {
+    label=<<B>Recipes (Multi-Step Workflows)</B>>
+    style=dashed color="#8B4513" fontname="Helvetica" fontsize=10
+
+    "recipe-arch-review" [
+      shape=tab fillcolor="#DEB887"
+      label=<<B>architecture-review</B><BR/><FONT POINT-SIZE="9">staged, 2 approval gates</FONT>>
+    ]
+    "recipe-exploration" [
+      shape=tab fillcolor="#DEB887"
+      label=<<B>design-exploration</B><BR/><FONT POINT-SIZE="9">flat, parallel foreach</FONT>>
+    ]
+    "recipe-codebase" [
+      shape=tab fillcolor="#DEB887"
+      label=<<B>codebase-understanding</B><BR/><FONT POINT-SIZE="9">flat, sequential</FONT>>
+    ]
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  EDGES: Composition (what includes what)
+  // ═══════════════════════════════════════════════════════════════
+
+  // Bundle includes
+  "bundle.md" -> "foundation" [style=solid label="includes"]
+  "bundle.md" -> "system-design-behavior" [style=dashed label="includes"]
+
+  // Behavior composition
+  "system-design-behavior" -> "modes-behavior" [style=dashed label="includes"]
+  "system-design-behavior" -> "hooks-mode" [style=solid color="#D9A0D9" label="hook"]
+  "system-design-behavior" -> "hooks-design-context" [style=solid color="#D9A0D9" label="hook"]
+  "system-design-behavior" -> "tool-mode" [style=solid color="#B0B0B0" label="tool"]
+  "system-design-behavior" -> "tool-skills" [style=solid color="#B0B0B0" label="tool"]
+  "system-design-behavior" -> "agent-architect" [style=dotted label="agent"]
+  "system-design-behavior" -> "agent-critic" [style=dotted label="agent"]
+  "system-design-behavior" -> "agent-writer" [style=dotted label="agent"]
+
+  // Behavior context includes
+  "system-design-behavior" -> "ctx-instructions" [style=dotted color="grey"]
+  "system-design-behavior" -> "ctx-principles" [style=dotted color="grey"]
+  "system-design-behavior" -> "ctx-tradeoff" [style=dotted color="grey"]
+  "system-design-behavior" -> "ctx-adversarial" [style=dotted color="grey"]
+  "system-design-behavior" -> "ctx-template" [style=dotted color="grey"]
+
+  // ═══════════════════════════════════════════════════════════════
+  //  EDGES: @mention references (who reads what shared knowledge)
+  // ═══════════════════════════════════════════════════════════════
+
+  // Modes @mention context
+  "mode-design" -> "ctx-tradeoff" [style=dotted color="#DAA520" label="@mention"]
+  "mode-design" -> "ctx-adversarial" [style=dotted color="#DAA520" label="@mention"]
+  "mode-design" -> "ctx-principles" [style=dotted color="#DAA520" label="@mention"]
+
+  "mode-review" -> "ctx-tradeoff" [style=dotted color="#DAA520" label="@mention"]
+  "mode-review" -> "ctx-adversarial" [style=dotted color="#DAA520" label="@mention"]
+  "mode-review" -> "ctx-principles" [style=dotted color="#DAA520" label="@mention"]
+
+  // Agents @mention context
+  "agent-architect" -> "ctx-principles" [style=dotted color="#DAA520" label="@mention"]
+  "agent-architect" -> "ctx-tradeoff" [style=dotted color="#DAA520" label="@mention"]
+  "agent-architect" -> "ctx-template" [style=dotted color="#DAA520" label="@mention"]
+
+  "agent-critic" -> "ctx-adversarial" [style=dotted color="#DAA520" label="@mention"]
+  "agent-critic" -> "ctx-principles" [style=dotted color="#DAA520" label="@mention"]
+
+  "agent-writer" -> "ctx-template" [style=dotted color="#DAA520" label="@mention"]
+
+  // Skills @mention context
+  "skill-adversarial" -> "ctx-adversarial" [style=dotted color="#DAA520" label="@mention"]
+
+  // ═══════════════════════════════════════════════════════════════
+  //  EDGES: Runtime delegation (who invokes whom at runtime)
+  // ═══════════════════════════════════════════════════════════════
+
+  // /design mode delegates to agents
+  "mode-design" -> "agent-architect" [
+    style=bold color="#E07070" label="delegates\n(Phases 1,3,4,6:\nanalysis + design)"
+  ]
+  "mode-design" -> "agent-critic" [
+    style=bold color="#E07070" label="delegates\n(Phase 5: risk review)"
+  ]
+  "mode-design" -> "agent-writer" [
+    style=bold color="#E07070" label="delegates\n(Phase 8: write doc)"
+  ]
+
+  // /design mode suggests skills
+  "mode-design" -> "skill-adversarial" [style=dashed color="#20B2AA" label="suggests"]
+  "mode-design" -> "skill-tradeoff" [style=dashed color="#20B2AA" label="suggests"]
+  "mode-design" -> "skill-primitives" [style=dashed color="#20B2AA" label="suggests"]
+  "mode-design" -> "skill-web" [style=dashed color="#20B2AA" label="suggests"]
+  "mode-design" -> "skill-events" [style=dashed color="#20B2AA" label="suggests"]
+
+  // /design-review mode delegates to agents
+  "mode-review" -> "agent-critic" [
+    style=bold color="#E07070" label="delegates\n(Step 3: analysis)"
+  ]
+
+  // /design-review mode suggests skills
+  "mode-review" -> "skill-adversarial" [style=dashed color="#20B2AA" label="suggests"]
+  "mode-review" -> "skill-tradeoff" [style=dashed color="#20B2AA" label="suggests"]
+
+  // ═══════════════════════════════════════════════════════════════
+  //  EDGES: Recipe step assignments (which agent runs each step)
+  // ═══════════════════════════════════════════════════════════════
+
+  // architecture-review recipe
+  "recipe-arch-review" -> "foundation:explorer" [
+    style=bold color="#8B4513" label="step: survey"
+  ]
+  "recipe-arch-review" -> "agent-architect" [
+    style=bold color="#8B4513" label="steps: boundaries,\nperspective analysis"
+  ]
+  "recipe-arch-review" -> "agent-critic" [
+    style=bold color="#8B4513" label="step: synthesize risks"
+  ]
+  "recipe-arch-review" -> "agent-writer" [
+    style=bold color="#8B4513" label="step: write report"
+  ]
+
+  // design-exploration recipe
+  "recipe-exploration" -> "agent-architect" [
+    style=bold color="#8B4513" label="steps: frame, generate\n(3x parallel), evaluate"
+  ]
+  "recipe-exploration" -> "agent-critic" [
+    style=bold color="#8B4513" label="step: adversarial\nreview (optional)"
+  ]
+
+  // codebase-understanding recipe
+  "recipe-codebase" -> "foundation:explorer" [
+    style=bold color="#8B4513" label="step: survey"
+  ]
+  "recipe-codebase" -> "agent-architect" [
+    style=bold color="#8B4513" label="steps: boundaries,\nflows, overview"
+  ]
+
+  // ═══════════════════════════════════════════════════════════════
+  //  LEGEND
+  // ═══════════════════════════════════════════════════════════════
+  subgraph cluster_legend {
+    label=<<B>Legend</B>>
+    style=solid color="#333333" fontname="Helvetica" fontsize=10
+    margin=12
+
+    // Invisible nodes for layout
+    node [fontsize=9 width=0.1 height=0.1]
+
+    "leg_bundle" [shape=box fillcolor="#4A90D9" fontcolor=white label="Bundle"]
+    "leg_behavior" [shape=component fillcolor="#6AAF6A" label="Behavior"]
+    "leg_context" [shape=note fillcolor="#F0E68C" label="Context"]
+    "leg_mode" [shape=octagon fillcolor="#F0A0A0" label="Mode"]
+    "leg_agent" [shape=ellipse fillcolor="#F5A623" label="Agent"]
+    "leg_skill" [shape=diamond fillcolor="#98E8E0" label="Skill"]
+    "leg_recipe" [shape=tab fillcolor="#DEB887" label="Recipe"]
+    "leg_hook" [shape=hexagon fillcolor="#D9A0D9" label="Hook"]
+    "leg_tool" [shape=cds fillcolor="#B0B0B0" label="Tool"]
+
+    // Edge legend
+    "leg_e1a" [shape=point width=0.01]
+    "leg_e1b" [shape=point width=0.01]
+    "leg_e2a" [shape=point width=0.01]
+    "leg_e2b" [shape=point width=0.01]
+    "leg_e3a" [shape=point width=0.01]
+    "leg_e3b" [shape=point width=0.01]
+
+    "leg_e1a" -> "leg_e1b" [style=bold color="#E07070" label="delegates"]
+    "leg_e2a" -> "leg_e2b" [style=bold color="#8B4513" label="recipe step"]
+    "leg_e3a" -> "leg_e3b" [style=dotted color="#DAA520" label="@mention"]
+  }
+}

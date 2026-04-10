@@ -8,14 +8,14 @@ meta:
     <example>
     Context: Design validated through /design mode conversation
     user: "The design looks good, save it"
-    assistant: "I'll delegate to system-design-intelligence:systems-design-writer to write the design document."
+    assistant: "I'll delegate to systems-design:systems-design-writer to write the design document."
     <commentary>Design-writer writes the artifact after design is validated with user in /design mode.</commentary>
     </example>
 
     <example>
     Context: All design sections approved by user
     user: "Write up the design document"
-    assistant: "I'll use system-design-intelligence:systems-design-writer to format and save the validated design."
+    assistant: "I'll use systems-design:systems-design-writer to format and save the validated design."
     <commentary>Document creation is the design-writer agent's sole responsibility.</commentary>
     </example>
 
@@ -67,6 +67,6 @@ If you catch yourself doing any of these, stop:
 
 ---
 
-@system-design-intelligence:context/structured-design-template.md
+@systems-design:context/structured-design-template.md
 
 @foundation:context/shared/common-agent-base.md

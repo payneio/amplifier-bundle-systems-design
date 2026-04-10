@@ -80,7 +80,7 @@ context.** But they DO shape how zen-architect behaves when we delegate to it.
 ```yaml
 ---
 bundle:
-  name: system-design-intelligence
+  name: systems-design
   version: 0.1.0
   description: Systems design capabilities for agentic development
 
@@ -90,8 +90,8 @@ includes:
 
 # System Design Intelligence
 
-@system-design-intelligence:context/system-design-principles.md
-@system-design-intelligence:context/instructions.md
+@systems-design:context/system-design-principles.md
+@systems-design:context/instructions.md
 
 ---
 
