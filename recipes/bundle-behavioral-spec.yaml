@@ -156,6 +156,19 @@ steps:
 
       {{extractions}}
 
+      ## Recipe Structural Data (deterministic parse of recipe YAML files)
+
+      Each entry contains: name, version, tags, execution_mode (flat|staged),
+      steps (id, type, agent, condition, output, foreach, parallel),
+      data_flow (variable -> produced_by + consumed_by),
+      approval_gates (stage name + requires_approval),
+      sub_recipe_calls (step_id + recipe path).
+
+      This is deterministic structural data -- richer and more reliable than
+      LLM extraction for recipes. Use this as the PRIMARY source for Section 7.
+
+      {{manifest.recipe_manifests}}
+
       ---
 
       ## Required Document Structure
@@ -198,10 +211,17 @@ steps:
       - Delegation chains and escalation paths
 
       ### 7. Recipe Workflows
+      Use the "Recipe Structural Data" section above as your PRIMARY source.
       For each recipe:
-      - Purpose, execution mode (flat vs staged)
-      - Steps with agent assignments and data flow
-      - Approval gates (if staged)
+      - Name, purpose (from description), execution mode (flat vs staged)
+      - Step-by-step walkthrough: for each step, show id, agent (or type=bash),
+        what it produces (output variable), and what it consumes (variable refs)
+      - Data flow diagram: which steps produce variables consumed by later steps
+      - Approval gates (if staged): which stages pause for user approval
+      - Relationship to modes: does this recipe automate the same workflow as a
+        mode? If so, note that they are parallel mechanisms (recipe = automated
+        pipeline, mode = interactive session) -- recipes do NOT activate modes
+      - Agent delegation: which agents are invoked at each step, what model_role
 
       ### 8. Behavioral Invariants
       - Constraints that hold regardless of mode or state

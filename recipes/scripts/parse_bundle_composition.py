@@ -499,8 +499,14 @@ def parse_recipe(path: Path, bundle_origin: str) -> ParsedManifest:
     # Execution mode: staged if 'stages' key present, flat otherwise
     execution_mode = "staged" if "stages" in fm else "flat"
 
-    # Collect flat steps list
+    # Collect steps from both flat recipes (top-level 'steps') and staged
+    # recipes ('stages[].steps').  For staged recipes the top-level 'steps' key
+    # is empty; steps live inside each stage.
     steps_raw: list[Any] = list(fm.get("steps") or [])
+    for stage in fm.get("stages") or []:
+        if isinstance(stage, dict):
+            steps_raw.extend(stage.get("steps") or [])
+
     steps: list[RecipeStepSummary] = []
     for step in steps_raw:
         if not isinstance(step, dict):
@@ -539,18 +545,28 @@ def parse_recipe(path: Path, bundle_origin: str) -> ParsedManifest:
         for var, producer in output_producers.items()
     }
 
-    # Approval gates: from stages that have requires_approval=true
+    # Approval gates: from stages that have approval.required=true or
+    # requires_approval=true (both formats seen in the wild).
     approval_gates: list[ApprovalGate] = []
     stages_raw: list[Any] = list(fm.get("stages") or [])
     for stage in stages_raw:
         if not isinstance(stage, dict):
             continue
-        if stage.get("requires_approval"):
+        approval_data = stage.get("approval") or {}
+        has_approval = stage.get("requires_approval") or (
+            isinstance(approval_data, dict) and approval_data.get("required")
+        )
+        if has_approval:
+            prompt_template = (
+                approval_data.get("prompt")
+                if isinstance(approval_data, dict)
+                else stage.get("approval_context_template")
+            )
             approval_gates.append(
                 ApprovalGate(
                     stage=stage.get("name", ""),
                     requires_approval=True,
-                    approval_context_template=stage.get("approval_context_template"),
+                    approval_context_template=prompt_template,
                 )
             )
 
@@ -950,11 +966,18 @@ def build_manifest(
 
     llm_targets = [m for m in manifests if m.get("needs_llm") is True]
 
+    # Extract recipe manifests as a top-level key for direct use in synthesis.
+    # Recipe structural data (steps, data_flow, approval_gates) is richer than
+    # what LLM extraction would produce, so recipes are excluded from
+    # llm_targets but need to be surfaced explicitly for the spec writer.
+    recipe_manifests = [m for m in manifests if m.get("component_type") == "recipe"]
+
     return {
         "bundle_name": bundle_name,
         "dependency_tree": dependency_tree,
         "manifests": manifests,
         "llm_targets": llm_targets,
+        "recipe_manifests": recipe_manifests,
         "skipped_bundles": skipped_bundles,
         "skills_sources": skills_sources,
     }
