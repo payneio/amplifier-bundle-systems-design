@@ -127,3 +127,95 @@ budgets. Options:
 - Use skills for detailed methodology (loaded on demand)
 - Use the context sink pattern (heavy docs in agent sessions only)
 - Use `context.include` in behaviors so only composed content loads
+
+## Context Window Impact
+
+Content files sit in the **system prompt layer** of the context window -- the one
+layer that is completely immune to compaction. This makes them the most expensive
+mechanism per token over the life of a session.
+
+### The Cost Model
+
+The system prompt factory re-assembles the full system prompt on **every LLM call**.
+It re-reads all @mentioned files from disk, deduplicates by SHA-256 hash, and
+wraps each in `<context_file>` XML blocks prepended to the instruction body. This
+entire payload becomes the system message.
+
+During compaction, system messages are **extracted before compaction runs and
+unconditionally re-prepended after**. They are never truncated, never removed,
+never windowed. The compaction budget operates only on the non-system portion of
+the context.
+
+```
+Budget available for conversation = context_window - system_prompt_size - reserved_space
+```
+
+Every token in your @mentioned files directly reduces the budget available for
+conversation history and tool results.
+
+### @mentions vs context.include
+
+Both mechanisms have identical token cost -- they both resolve to content in the
+system prompt. The difference is compositional:
+
+| Mechanism | Composition behavior | Token implication |
+|-----------|---------------------|-------------------|
+| `@mentions` in instruction body | Replaced if another bundle overrides the instruction | Tokens go away if instruction is overridden |
+| `context.include` in behavior YAML | Accumulates across all composed behaviors | Tokens add up across every behavior in the chain |
+
+`context.include` is particularly dangerous for token budgets because it
+**accumulates silently**. A bundle that composes three behaviors each adding 2K
+tokens of context has a 6K token permanent floor before any conversation starts,
+and that cost is invisible unless you audit the composition chain.
+
+### Quantifying the Cost
+
+For reference, the foundation bundle's base context (common-system-base.md,
+delegation instructions, multi-agent patterns, etc.) already consumes a
+significant token floor. Every bundle that adds content files on top of foundation
+increases this permanent overhead.
+
+| Content size | Per-turn cost | Over 50-turn session |
+|-------------|---------------|---------------------|
+| 500 words (~375 tokens) | 375 tokens | 18,750 tokens |
+| 2,000 words (~1,500 tokens) | 1,500 tokens | 75,000 tokens |
+| 5,000 words (~3,750 tokens) | 3,750 tokens | 187,500 tokens |
+
+These costs are **multiplied across every LLM call**, including calls made by
+tool-using loops (which may make 5-10 LLM calls per user turn).
+
+### The Context Sink Alternative
+
+The "context sink" pattern exists specifically to address this cost. Instead of
+loading heavy documentation in the root session's system prompt, the docs are
+@mentioned in **agent definition files**. When an agent spawns, those @mentions
+load in the **child's** context -- not the parent's.
+
+Root session context file (thin pointer):
+```markdown
+For bundle composition details, delegate to `foundation:foundation-expert`.
+```
+
+Agent definition file (heavy docs):
+```markdown
+@foundation:docs/BUNDLE_GUIDE.md
+@foundation:docs/URI_FORMATS.md
+@core:docs/contracts/TOOL_CONTRACT.md
+```
+
+The parent pays ~100 tokens for the pointer. The child pays ~10K tokens for the
+full docs -- but only when spawned, and only in its own context window.
+
+### Design Guidelines
+
+1. **Budget per byte.** Every token in a content file is paid on every turn. Treat
+   content files like permanent memory allocation.
+2. **Concise principles over detailed reference.** Content files should contain
+   high-signal behavioral guidance (~1-2K tokens). Move detailed reference
+   material to skills (on-demand) or agent @mentions (child context).
+3. **Audit composition chains.** When composing behaviors, tally the total
+   `context.include` footprint. Silent accumulation is the most common cause of
+   unexpectedly large system prompts.
+4. **Use the context sink pattern for heavy docs.** If a document exceeds ~1K
+   tokens and is only needed for specific tasks, put it in an agent definition
+   file rather than root session context.

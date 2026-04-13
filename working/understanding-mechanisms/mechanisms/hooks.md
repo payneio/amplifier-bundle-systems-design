@@ -120,3 +120,96 @@ protocol compliance).
 For initial experiments, the modes system (which is built on hooks) gives us most
 of the design-phase enforcement we need without writing custom hooks. Custom hooks
 would be valuable later for automated design quality feedback.
+
+## Context Window Impact
+
+Hooks interact with the context window through the `inject_context` action, which
+has two distinct modes with very different token economics.
+
+### Ephemeral Injections (recommended default)
+
+When a hook returns `inject_context` with `ephemeral=True`:
+
+1. The orchestrator calls `get_messages_for_request()` (compaction runs here)
+2. The ephemeral content is appended to the returned message list **after** compaction
+3. The LLM sees it in the current request
+4. The content is never passed to `context.add_message()` -- it evaporates after the call
+5. Next turn, the hook fires again and re-creates the injection fresh
+
+| Factor | Detail |
+|--------|--------|
+| Storage | None -- not in message history |
+| Compactable | No -- bypasses compaction entirely |
+| Persistence | Single LLM call only |
+| Cost model | Fixed per turn while the hook fires |
+| Accumulation | Never compounds -- re-created fresh each time |
+
+This is the pattern used by `hooks-mode` (mode body), `hooks-skills-visibility`
+(skill list), and `hooks-status-context` (git/environment status).
+
+### Persistent Injections (use sparingly)
+
+When a hook returns `inject_context` with `ephemeral=False` (or calls
+`context.add_message()` directly):
+
+| Factor | Detail |
+|--------|--------|
+| Storage | Message history (permanent) |
+| Compactable | Yes -- treated like any other message |
+| Persistence | Until compacted away |
+| Cost model | Accumulates over time |
+| Risk | Can grow unboundedly if hook fires frequently |
+
+Persistent injections are appropriate when the information must be visible across
+multiple turns and the hook doesn't fire often. They're dangerous for hooks that
+fire on every `provider:request` because each injection adds to the message
+history.
+
+### The `tool:post` Timing
+
+For hooks on `tool:post` events, ephemeral injections are queued in
+`_pending_ephemeral_injections` and applied at the **start of the next loop
+iteration** (not the current one). This creates a one-iteration delay:
+
+```
+Tool executes -> tool:post hook fires -> injection queued
+-> Next iteration starts -> queued injection applied -> LLM sees it
+```
+
+The `append_to_last_tool_result=True` option merges the injection into the
+previous tool result message body rather than creating a new message. This avoids
+the structural oddity of a bare system message appearing between tool results.
+
+### Budget Enforcement
+
+The coordinator tracks injection budgets per turn:
+
+| Limit | Type | Behavior |
+|-------|------|----------|
+| `injection_size_limit` | Hard limit (characters) | Raises ValueError if exceeded |
+| `injection_budget_per_turn` | Soft limit (tokens, chars/4) | Warning logged, injection proceeds |
+
+Both ephemeral and non-ephemeral injections count against the per-turn budget.
+Multiple hooks firing on the same event accumulate toward the limit.
+
+### Token Cost of Real Hooks
+
+| Hook | Event | Injection type | Approximate per-turn cost |
+|------|-------|---------------|--------------------------|
+| hooks-mode | provider:request | Ephemeral | Size of mode file (~500-2,000 tokens) |
+| hooks-skills-visibility | provider:request | Ephemeral | ~1,000-1,500 tokens (scales with skill count) |
+| hooks-status-context | provider:request | Ephemeral | ~200-400 tokens (git status + env info) |
+| hooks-progress-monitor | tool:post | Ephemeral (queued) | ~100-200 tokens (only when triggered) |
+
+### Design Guidelines for Hook Authors
+
+1. **Default to `ephemeral=True`.** Unless the information must survive across
+   turns, ephemeral injections avoid accumulation in message history.
+2. **Be size-conscious on `provider:request` hooks.** These fire on every LLM
+   call, including tool-loop iterations. A 500-token injection on a turn with 5
+   tool calls costs 2,500 tokens.
+3. **Use `append_to_last_tool_result` for `tool:post` feedback.** This avoids
+   creating extra messages that fragment the conversation structure.
+4. **Consider conditional injection.** Not every turn needs the same context.
+   Check session state before injecting to skip turns where the information isn't
+   relevant.

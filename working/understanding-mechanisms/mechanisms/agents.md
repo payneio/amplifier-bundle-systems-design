@@ -145,3 +145,92 @@ The context sink pattern is especially valuable for design work because:
 | Multi-turn investigation needed | Single-shot guidance works |
 | Heavy doc consumption required | Lightweight patterns needed |
 | Tool restrictions differ from parent | Same tools work |
+
+## Context Window Impact
+
+Agents are the primary **context management** mechanism in Amplifier. The context
+sink pattern isn't just an architectural nicety -- it's the core strategy for
+keeping the parent session's context window viable across long interactions.
+
+### What the Parent Pays
+
+When the parent delegates to an agent, the context cost in the parent session is:
+
+| Item | Approximate tokens |
+|------|--------------------|
+| Assistant message with tool_use block (delegate call) | ~100-200 tokens |
+| Tool result message (agent's text response) | ~200-500 tokens |
+| **Total parent cost per delegation** | **~300-700 tokens** |
+
+This is a tool call/result pair in the message history, subject to normal
+compaction. Over time, old delegation results get truncated (to ~250 chars) and
+eventually removed by the compaction cascade.
+
+### What the Child Absorbs
+
+The child session absorbs all exploration costs in its own context window:
+
+| Item | Approximate tokens |
+|------|--------------------|
+| Child's system prompt (agent @mentions + instruction) | 5,000-20,000 tokens |
+| File reads, grep results, LSP operations | 10,000-50,000+ tokens |
+| Multi-turn reasoning within the child | 5,000-20,000 tokens |
+
+When the child session completes, all of this is discarded. The parent receives
+only the final text summary.
+
+**Example:** An explorer agent reading 20 files might consume 40K tokens in its
+own context. The parent pays ~400 tokens for the delegation round-trip. That's a
+100x token efficiency gain.
+
+### Context Inheritance Costs
+
+The `context_depth` and `context_scope` parameters control how much parent context
+the child inherits. This inherited context is formatted as plain text and injected
+into the child's first user message (not via set_messages).
+
+| Setting | Token cost in child |
+|---------|-------------------|
+| `context_depth="none"` | 0 -- clean slate |
+| `context_depth="recent"` (default, 5 turns) | ~1,000-2,500 tokens (each message truncated to 2000 chars) |
+| `context_depth="all"`, `context_scope="full"` | Potentially very large -- entire parent history |
+
+The inherited context sits in the child's first user message, which is protected
+from removal during compaction (user messages are only stubbed at Level 8). For
+long parent histories with `context_depth="all"`, this can consume substantial
+child context budget.
+
+**Recommendation:** Default `context_depth="recent"` with `context_scope="conversation"`
+is designed for the common case. Use `"all"` + `"full"` only when the child
+genuinely needs the complete parent history (debugging, self-delegation).
+
+### The Token Economics of Parallel Delegation
+
+Dispatching multiple agents in parallel multiplies the token efficiency:
+
+```
+Direct approach (no agents):
+  20 file reads = ~20K tokens permanently in parent context
+
+Sequential delegation (3 agents):
+  Agent A: reads 7 files, returns summary (~400 tokens in parent)
+  Agent B: reads 7 files, returns summary (~400 tokens in parent)
+  Agent C: reads 6 files, returns summary (~400 tokens in parent)
+  Total parent cost: ~1,200 tokens (compactable)
+
+Parallel delegation (same 3 agents):
+  Same total cost, but all three run concurrently.
+```
+
+### Agent @mentions vs Root @mentions
+
+Heavy documentation should live in agent definition files, not root bundle context:
+
+| Approach | Cost model |
+|----------|-----------|
+| 10K tokens of docs as root @mention | 10K tokens x every turn of the session (permanent) |
+| 10K tokens of docs as agent @mention | 10K tokens only when that agent is spawned (isolated) |
+
+This is the "context sink" pattern: root sessions carry thin awareness pointers
+("delegate to X for this topic"), while agents carry the heavy documentation in
+their own @mentions.

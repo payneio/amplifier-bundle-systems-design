@@ -160,3 +160,75 @@ The superpowers full-development-cycle recipe (440 lines, 4 stages, 3 approval
 gates) is the most sophisticated example -- composing brainstorming, planning,
 worktree setup, subagent-driven development, and finishing into end-to-end flow.
 This serves as a strong template for a "system design lifecycle" recipe.
+
+## Context Window Impact
+
+Recipes have the strongest context isolation of any mechanism. Each step runs in
+a completely independent child session, and only text output propagates between
+steps.
+
+### Per-Step Isolation
+
+```
+Step 1 -> spawn() -> child session A (fresh context) -> runs, returns output text
+Step 2 -> spawn() -> child session B (fresh context) -> receives {{step1_output}} in prompt
+Step 3 -> spawn() -> child session C (fresh context) -> receives {{step1_output}}, {{step2_output}}
+```
+
+Each child session has:
+- Its own system prompt (from the agent's @mentions and instruction)
+- Its own message history (starts empty)
+- Its own compaction lifecycle (independent of parent and other steps)
+- No shared conversation history with other steps
+
+When a step completes, its entire context (file reads, tool results, reasoning
+turns) is discarded. Only the final text output is captured as a string in the
+recipe's context dict.
+
+### What the Parent Session Pays
+
+While a recipe executes, the parent session accumulates:
+- One tool call message (the `recipes` tool invocation)
+- One tool result message (the recipe's final output)
+
+Individual step delegations happen inside the recipe executor, not in the parent's
+message history. A 20-step recipe does NOT create 40 messages in the parent -- it
+creates 2 (one call, one result).
+
+### Context Accumulation via {{variables}}
+
+The recipe context dict is a flat key-value map of strings. Each step's output is
+stored as `{{step_id}}` (or the explicit `output:` variable name). Subsequent
+steps receive previous outputs interpolated into their prompt text.
+
+This means context accumulation is **textual, not conversational**. A step that
+produces a 2,000-token analysis creates a 2,000-token string that gets embedded
+verbatim in later step prompts. If multiple prior steps are referenced, the
+interpolated prompt can grow large.
+
+| Pattern | Token behavior |
+|---------|---------------|
+| Linear chain (each step references only the previous) | Constant-size prompts |
+| Fan-in (later step references all previous) | Prompt grows with number of prior steps |
+| Foreach with collect | Collected results all appear in the next step's prompt |
+
+### Recipes vs Direct Multi-Agent Delegation
+
+For the same multi-step workflow:
+
+| Approach | Parent context cost | Isolation |
+|----------|-------------------|-----------|
+| Direct sequential delegation | ~400 tokens per agent x N agents, all in parent history | Agent results accumulate in parent |
+| Recipe | ~400 tokens total (one recipe tool call/result) | Everything inside recipe is isolated |
+
+Recipes are significantly more context-efficient for multi-step workflows because
+the parent only sees the recipe as a single tool invocation. The individual step
+delegations, their outputs, and all intermediate work happen outside the parent's
+context window entirely.
+
+### Sub-Recipe Context Isolation
+
+Recipes calling sub-recipes (`type: "recipe"`) provide an additional isolation
+boundary. Sub-recipes receive only explicitly-passed context variables -- not the
+parent recipe's full context dict. This prevents context bleed between workflow
+phases.

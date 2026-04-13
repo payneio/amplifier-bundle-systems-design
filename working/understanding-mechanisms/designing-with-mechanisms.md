@@ -20,15 +20,15 @@ They overlap by design. The goal is not to pick one, but to assign **clear owner
 
 > **Where does it bind, and how long does it live?**
 
-| Mechanism | Attaches to | Lifetime | State location | Authored as |
-|-----------|-------------|----------|----------------|-------------|
-| Mode | Session | Togglable, ephemeral re-injection | `session_state["active_mode"]` | `.md` with YAML frontmatter |
-| Recipe | Workflow execution | Per-invocation, resumable | `state.json` on disk | `.yaml` |
-| Agent | Sub-session | One-shot or resumable | Kernel session (in-memory) | `.md` with YAML frontmatter |
-| Skill | Task pattern | On-demand (inline or forked) | None (stateless) or fork session | `SKILL.md` in a directory |
-| Hook | Lifecycle event | Session lifetime | Module state + `session_state` | Python module |
-| Tool | LLM decision | Session lifetime | Module state | Python module |
-| Content | Context window | Per-injection | None (consumed by LLM) | `.md` files |
+| Mechanism | Attaches to | Lifetime | State location | Authored as | Token impact |
+|-----------|-------------|----------|----------------|-------------|-------------|
+| Mode | Session | Togglable, ephemeral re-injection | `session_state["active_mode"]` | `.md` with YAML frontmatter | Ephemeral per-turn cost while active; never stored |
+| Recipe | Workflow execution | Per-invocation, resumable | `state.json` on disk | `.yaml` | Each step runs in isolated context; only text output propagates |
+| Agent | Sub-session | One-shot or resumable | Kernel session (in-memory) | `.md` with YAML frontmatter | Context sink -- parent pays ~200-500 tokens for summary |
+| Skill | Task pattern | On-demand (inline or forked) | None (stateless) or fork session | `SKILL.md` in a directory | L1 visibility: ~1K tokens/turn ephemeral; L2 load: compactable tool result |
+| Hook | Lifecycle event | Session lifetime | Module state + `session_state` | Python module | Ephemeral injections: per-turn cost; non-ephemeral: stored permanently |
+| Tool | LLM decision | Session lifetime | Module state | Python module | Results stored in message history; primary compaction target |
+| Content | Context window | Per-injection | None (consumed by LLM) | `.md` files | Fixed cost every turn; immune to compaction |
 
 ---
 
@@ -114,6 +114,80 @@ Ask in order:
 
 ---
 
+## Context Window Economics
+
+Every mechanism has a token cost. Understanding that cost -- and which costs are fixed vs compactable -- is essential for designing bundles that stay effective across long sessions.
+
+### The Three-Layer Model
+
+The context window sent to the LLM on each turn has three distinct layers with different persistence and compaction behavior:
+
+```
+Context Window (e.g., 200K tokens)
++-- LAYER 1: System Prompt (never compacted)
+|   Instruction body + all @mentioned files + context.include files
+|   Re-read from disk every turn. Fixed cost. Immune to compaction.
+|
++-- LAYER 2: Message History (compactable)
+|   User/assistant messages, tool calls and results.
+|   Accumulates during session. Compacted when budget pressure hits 92%.
+|   8-level cascade: truncate tool results -> remove old messages -> stub.
+|
++-- LAYER 3: Ephemeral Injections (per-turn, not stored)
+|   Skills visibility list, active mode body, hook injections.
+|   Appended AFTER compaction runs. Never enters message history.
+|   Cost repeats every turn but never compounds.
+|
++-- RESERVED
+    4096 tokens safety margin + 50% of max_output_tokens + 800 for compaction notice
+```
+
+**Budget formula:** `context_window - (max_output_tokens x 0.5) - 4096`
+
+Compaction triggers at 92% of budget and targets 50%. The system prompt sits outside the compactable portion entirely -- it's a permanent tax.
+
+### How Each Mechanism Affects the Budget
+
+| Mechanism | Layer | Compactable? | Cost model |
+|-----------|-------|-------------|------------|
+| **Content** (@mentions) | System prompt | Never | Fixed per turn. Every @mentioned file's full text is included in every LLM call. |
+| **Content** (context.include) | System prompt | Never | Same as @mentions. Accumulates across behavior composition. |
+| **Agents** (delegation) | Message history | Yes | Parent pays only ~200-500 tokens per delegation (tool call + summary result). Child absorbs all exploration tokens in its own context. |
+| **Skills** (L1 visibility) | Ephemeral | Never | ~1,000-1,500 tokens per turn (all skill names + descriptions). Scales with number of composed skills. |
+| **Skills** (L2 load) | Message history | Yes | Full skill content returned as tool result. Subject to normal compaction (truncated, then removed). |
+| **Skills** (fork) | Isolated session | N/A | Like agents: runs in child context, parent sees only the result. |
+| **Hooks** (ephemeral injection) | Ephemeral | Never | Per-turn cost while hook fires. Not stored. Disappears after each LLM call. |
+| **Hooks** (persistent injection) | Message history | Yes | Stored permanently via `context.add_message()`. Subject to compaction. |
+| **Modes** | Ephemeral | Never | Full mode markdown body injected every turn while active. Stops immediately on deactivation. |
+| **Recipes** | Isolated per step | N/A | Each step runs in a fresh child session. Only text output propagates via `{{variables}}`. No conversation history carries between steps. |
+| **Tools** (results) | Message history | Yes, first | Tool results are the primary compaction target. Truncated to 250 chars before messages are removed. Last 5 results protected. |
+
+### Design Implications
+
+**The fixed-cost trap.** Content files and context.include entries are the most dangerous budget item because they're invisible -- always present, never compacted, and they accumulate across behavior composition. A bundle that composes three behaviors each adding 2K tokens of context has a 6K token permanent floor before any conversation starts.
+
+**Compaction favors tool results over conversation.** The 8-level cascade truncates tool results first (Levels 1-2), then removes old messages (Level 3+). This means heavy tool use is more sustainable than heavy context file use -- tool results eventually get compacted away, but @mentioned content never does.
+
+**Ephemeral injections add up silently.** Skills visibility (~1K tokens) + an active mode (~500-2K tokens) + status context hooks can easily consume 3-4K tokens per turn that never appear in the message history but still eat into the available window.
+
+**Agents are the primary context management tool.** The context sink pattern isn't just about specialization -- it's about token economics. Delegating a 20-file exploration to an agent costs the parent ~400 tokens. Doing it directly costs ~20K tokens that persist in message history until compacted.
+
+### Rules of Thumb for Bundle Authors
+
+1. **Content files: budget per byte.** Every token in an @mentioned file is paid on every turn. Keep always-present content concise and high-value. Move detailed reference material to skills (loaded on demand) or agent @mentions (loaded in child context only).
+
+2. **Skills over content for reference material.** A 3K-token methodology guide as a content file costs 3K tokens x every turn. As a skill, it costs ~100 tokens/turn (L1 visibility) plus 3K tokens once when loaded (L2), and that load is compactable.
+
+3. **Fork skills over inline skills for heavy work.** If a skill's execution involves reading many files or producing large outputs, use `context: fork` to run it in an isolated child session.
+
+4. **Modes should be concise.** Mode content is injected ephemerally every turn. A 1,000-word mode file costs ~750 tokens per turn for every turn it's active. Keep mode guidance focused; move detailed methodology to a companion skill loaded once on mode activation.
+
+5. **Watch behavior composition.** Each `includes:` that adds `context.include` entries increases the permanent system prompt floor. Audit the total context footprint when composing multiple behaviors.
+
+6. **Prefer ephemeral over persistent hook injections.** Use `ephemeral=True` for hook context injections unless the information must survive across turns. Ephemeral injections don't accumulate in message history.
+
+---
+
 ## Practical Example: This Bundle
 
 The `systems-design` bundle composes all seven mechanisms:
@@ -144,12 +218,25 @@ All wired together through `behaviors/system-design.yaml`, which composes the mo
 
 ## Closing
 
-When mechanism choice gets confusing, ask:
+When mechanism choice gets confusing, ask three questions:
 
-> **"Where should this attach, and who triggers it?"**
+> **1. "Where should this attach, and who triggers it?"**
 
-- Attach at the **highest level where it remains valid** — session-wide constraints go in modes, not skills.
+- Attach at the **highest level where it remains valid** -- session-wide constraints go in modes, not skills.
 - **Code-decided behavior** (must happen every time) goes in hooks. **LLM-decided behavior** (model judges when) goes in tools.
 - **Recipes own ordering**, skills own expertise, agents own reasoning. Don't smear one into another.
 
-That question — attachment point plus trigger — resolves almost everything.
+> **2. "What does this cost the context window, and when is that cost paid?"**
+
+- Content that's needed **every turn** belongs in the system prompt (content files) -- but keep it concise, because it's a permanent tax that compaction can never recover.
+- Content that's needed **once or occasionally** belongs in skills (loaded on demand, compactable) or agent @mentions (isolated in child context).
+- Content that's needed **only during a phase** belongs in modes (ephemeral, stops when deactivated) rather than content files (permanent).
+- Heavy exploration belongs in **agents** (context sinks) -- the parent pays hundreds of tokens instead of tens of thousands.
+
+> **3. "Does this scale with session length?"**
+
+- System prompt content and ephemeral injections are **fixed per turn** -- they don't grow, but they never shrink either.
+- Tool results and conversation history **accumulate** but are **compactable** -- the system manages the pressure automatically.
+- Agent delegations are the **only mechanism that doesn't accumulate** -- each delegation is a bounded cost that gets compacted like any other tool result.
+
+The first question -- attachment point plus trigger -- resolves *which* mechanism. The second and third -- context cost and scaling behavior -- resolve *how* to use it without starving the session of working memory.

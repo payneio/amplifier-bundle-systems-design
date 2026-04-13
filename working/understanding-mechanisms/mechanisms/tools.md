@@ -114,3 +114,89 @@ interaction.
 Key question: Which design capabilities need the structure and validation that
 tools provide vs. which can be accomplished through prompt engineering (skills/
 context)?
+
+## Context Window Impact
+
+Tools affect the context window through their **results** -- every tool call
+creates a pair of messages in the conversation history (an assistant message with
+the tool_use block, and a tool result message with the output). These are the
+primary target of the compaction system.
+
+### The Tool Result Lifecycle
+
+1. **Creation:** Tool executes, result added to `self.messages` via
+   `context.add_message()` with `role: "tool"`
+2. **Active use:** Result is included in full in subsequent LLM calls
+3. **Compaction Level 1-2:** Oldest tool results truncated to 250 chars
+   (preserving tool name and call ID for structural integrity)
+4. **Compaction Level 3+:** Tool result + its paired assistant message removed
+   atomically
+5. **Protection:** The 5 most recent tool results are immune to truncation through
+   Level 5
+
+### Token Cost Model
+
+| Factor | Detail |
+|--------|--------|
+| Storage | Message history (permanent until compacted) |
+| Compactable | Yes -- first mechanism targeted by compaction |
+| Typical size | Varies enormously: `read_file` can return 10K+ tokens; `glob` returns ~100 tokens |
+| Protection | Last 5 tool results at full content |
+| Pair removal | Tool result always removed with its paired assistant tool_use message |
+
+### Why Tools Are the Primary Compaction Target
+
+The 8-level compaction cascade targets tool results first because:
+- Tool results are often large (file contents, search results, command output)
+- They're frequently one-shot references (the agent read a file, extracted what it
+  needed, and moved on)
+- Truncation preserves structural metadata (tool name, call ID) so the agent
+  can re-invoke if needed
+- Removing old tool results recovers the most tokens with the least information loss
+
+### The Truncation Format
+
+Truncated tool results look like:
+```
+[truncated: ~5,432 tokens - call tool again if needed] first 250 chars of content...
+```
+
+This tells the agent exactly how much was lost and that re-invocation is possible.
+
+### Tool Dispatch and Context Overhead
+
+Each tool call in a single turn creates an assistant message with one or more
+`tool_use` blocks, plus one `tool` result message per call. The orchestrator's
+tool-calling loop can make multiple LLM calls per user turn:
+
+```
+User message -> LLM call 1 (returns 3 tool calls) -> execute tools -> 
+LLM call 2 (returns 2 more tool calls) -> execute tools ->
+LLM call 3 (returns text response) -> done
+```
+
+Each cycle adds tool_use + tool_result messages to history. A turn with 10 tool
+calls adds ~20 messages. These accumulate and eventually trigger compaction.
+
+### Tools That Spawn Sessions
+
+Tools like `delegate` and `recipes` internally create child sessions. From the
+parent's context perspective, these behave like any other tool: one tool_use
+message + one tool_result message. The fact that an entire agent session ran
+inside the tool is invisible to the parent's context manager -- only the final
+text output appears in the result.
+
+### Design Guidelines
+
+1. **Tool descriptions cost tokens too.** Each tool's name, description, and JSON
+   schema are sent as part of the LLM request on every call. A bundle with 20
+   tools may spend 2-3K tokens just on tool definitions.
+2. **Return concise results.** Tools that return large outputs (full file contents,
+   verbose command output) create large entries in message history. Consider
+   truncating or summarizing within the tool implementation.
+3. **Leverage the "last 5" protection.** The most recent tool results stay at full
+   fidelity. Design workflows so the most important tool calls happen last.
+4. **Consider tool result size vs skill alternative.** If a tool primarily returns
+   static reference information, a skill might be more token-efficient (loaded
+   once, compacted normally) vs a tool (result persists until compaction pressure
+   hits).

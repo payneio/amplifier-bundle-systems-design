@@ -125,6 +125,67 @@ and we can build system-design-specific modes that follow the same pattern.
   documenting, and evaluating design constraints. Block writes, allow reads.
   Enforce systematic constraint identification before solution exploration.
 
+## Context Window Impact
+
+Modes affect the context window through **ephemeral injection** -- the mode's
+full markdown body is injected on every LLM call while the mode is active, but
+never stored in message history.
+
+### How Mode Content Is Injected
+
+The `hooks-mode` module fires on `provider:request` (priority 10). When a mode is
+active, it:
+
+1. Re-reads the mode file from disk (fresh every turn)
+2. Resolves any `@namespace:path` mentions in the mode body (expanding them inline)
+3. Wraps everything in `<system-reminder source="mode-{name}">` tags
+4. Returns as `inject_context` with `ephemeral=True`
+
+The orchestrator appends this to the message list **after** compaction runs. The
+content is never passed to `context.add_message()` -- it evaporates after each
+LLM call and is re-created fresh on the next.
+
+### Token Cost Model
+
+| Factor | Detail |
+|--------|--------|
+| Per-turn cost | Full size of mode markdown file + any expanded @mentions |
+| Storage | None -- never enters message history |
+| Compactable | No -- ephemeral injections bypass compaction |
+| Accumulation | Never compounds -- re-created fresh each turn |
+| Deactivation | Cost stops immediately when mode is cleared |
+
+**Concrete example:** A mode with 1,000 words of guidance (~750 tokens) costs 750
+tokens per LLM call. On a turn where the agent makes 5 tool calls (6 LLM calls
+total), the mode costs ~4,500 tokens for that turn. Over a 30-turn session with
+an average of 3 LLM calls per turn, the total mode cost is ~67,500 tokens.
+
+### @Mentions in Mode Bodies
+
+Mode files can contain `@namespace:path` references. These are resolved inline by
+the mode hook -- the referenced file's full text replaces the mention. This means
+a mode that @mentions a 2,000-token context file costs 2,000+ tokens per turn on
+top of the mode's own content.
+
+**Design implication:** Keep mode bodies concise. Move detailed methodology to a
+companion skill that the mode's guidance tells the agent to load once on
+activation, rather than @mentioning it in the mode body (which would inject it
+every turn).
+
+### Modes vs Content Files for Behavioral Guidance
+
+| Aspect | Mode | Content file |
+|--------|------|-------------|
+| When active | Only while mode is toggled on | Always (every turn of session) |
+| Token cost per turn | Same (both immune to compaction) | Same |
+| Total session cost | Lower (only active portion of session) | Higher (entire session) |
+| Can be deactivated | Yes -- cost stops immediately | No -- permanent |
+
+Modes are more token-efficient than content files for guidance that's only needed
+during specific phases of work. The superpowers workflow demonstrates this:
+`/brainstorm` mode guidance is only paid for during the design conversation, not
+during implementation.
+
 ### The Hybrid Pattern
 
 Superpowers established the "hybrid pattern": the main agent handles the
