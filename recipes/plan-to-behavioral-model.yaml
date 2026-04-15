@@ -68,7 +68,8 @@ steps:
         ],
         "agents": [
           {
-            "name": "", "purpose": "", "model_role": "",
+            "name": "", "purpose": "",
+            "model_role": ["primary_role", "fallback_role"],
             "trigger_conditions": [], "operating_modes": [],
             "behavioral_directives": [], "tool_requirements": [],
             "context_loading": [], "exit_conditions": []
@@ -79,14 +80,15 @@ steps:
             "name": "", "type": "inline|fork|companion",
             "purpose": "", "invocation": "",
             "workflow_phases": [], "behavioral_directives": [],
-            "mode_association": ""
+            "mode_association": "",
+            "delegation_pattern": {"delegates_to": "named_agent|anonymous_persona", "target": "", "count": 0}
           }
         ],
         "recipes": [
           {
             "name": "", "purpose": "", "execution_mode": "flat|staged",
             "steps": [{"id": "", "agent": "", "produces": "", "consumes": []}],
-            "approval_gates": [],
+            "approval_gates": [{"name": "", "placed_after_step": "", "semantic": "validates_previous|authorizes_next"}],
             "relationship_to_modes": ""
           }
         ],
@@ -103,6 +105,19 @@ steps:
       - For agents, capture all operating modes (e.g., ANALYZE, DESIGN, ASSESS).
       - For skills, distinguish inline vs fork vs companion types.
       - For recipes, capture step-by-step data flow.
+      - For model_role, extract as an ordered fallback array. If the plan
+        specifies a single role (e.g., "reasoning"), represent it as
+        ["reasoning", "general"] since Amplifier agents use fallback chains.
+        If the plan explicitly lists multiple roles, preserve the order.
+      - For approval gates, determine the semantic: does the gate validate
+        what the previous step produced ("validates_previous"), or authorize
+        proceeding to the next step ("authorizes_next")? Look at the gate's
+        position relative to steps and the gate name for clues. If ambiguous,
+        flag it as ambiguous.
+      - For fork skills that delegate, distinguish whether they delegate to
+        a named agent (e.g., "systems-design-critic") or to anonymous agents
+        with persona instructions (e.g., "5 parallel agents with SRE/security/
+        etc. personas"). Extract the target and count.
 
   # ==========================================================================
   # Step 2: Synthesize Model
