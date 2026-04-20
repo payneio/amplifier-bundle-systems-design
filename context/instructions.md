@@ -10,23 +10,25 @@ When the user asks about system design, architecture, technology selection, or s
 |-------------|---------|
 | "Design a system for..." / "How should we architect..." | `/systems-design` mode |
 | "Review this architecture..." / "Evaluate our system..." | `/systems-design-review` mode |
-| "Compare X vs Y for our use case..." | `/systems-design` mode (Phase 4: tradeoff analysis) |
+| "Compare X vs Y for our use case..." | `/systems-design` mode (Phase 5: tradeoff analysis) |
 | Quick design question (< 5 min) | Answer directly, no mode needed |
 | "Run an architecture review of this codebase" | `systems-design-review` recipe |
 | "Help me understand this codebase" | `codebase-understanding` recipe |
 
-## Mode Entry
+## Mode Entry — MANDATORY Companion Skill Loading
 
-When activating a mode, load its companion skill immediately:
+When a mode activates, **your FIRST action MUST be loading its companion skill.** Do NOT respond to the user's question first. Do NOT answer conversationally. Load the skill, THEN follow its methodology.
 
-| Mode | Companion Skill |
-|------|----------------|
-| `/systems-design` | `systems-design-methodology` |
-| `/systems-design-review` | `systems-design-review-methodology` |
+| Mode | First Action |
+|------|-------------|
+| `/systems-design` | `load_skill(skill_name="systems-design-methodology")` |
+| `/systems-design-review` | `load_skill(skill_name="systems-design-review-methodology")` |
 
-The mode gates tools. The companion skill governs behavior.
+The mode gates tools. The companion skill governs behavior. **Both are mandatory.**
 
 ## Methodology Calibration
+
+**This section applies ONLY when NO mode is active.** Once a mode is active, its companion skill governs behavior — the calibration table below does not override or bypass it.
 
 Not every design question needs the full pipeline. Match the approach to the scope:
 

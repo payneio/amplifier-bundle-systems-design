@@ -37,23 +37,43 @@ mode:
 Evaluating an existing design or proposed architectural change. Write tools are
 blocked -- this mode produces assessments, not code.
 
-**Companion skill:** `systems-design-review-methodology` -- load it at mode entry for the
-full 6-step workflow, delegation patterns, and user validation checkpoints.
+<MANDATORY>
+## First Action: Load the Companion Skill
+
+**Your VERY FIRST action when this mode activates MUST be:**
+
+```
+load_skill(skill_name="systems-design-review-methodology")
+```
+
+This is not optional. This is not "if you think it's helpful." This is a hard
+requirement. The companion skill contains the step-by-step workflow that governs
+your behavior in this mode. Without it, you will produce generic opinions instead
+of structured architectural assessments.
+
+**Do NOT respond to the user's question before loading the skill.** The skill
+determines HOW you respond. Load it first, then follow its steps.
+
+**Common rationalization to reject:** "This is just a quick opinion question,
+I don't need the methodology." WRONG. If the user activated this mode, they want
+a structured review, not a conversational opinion. If they wanted a quick take,
+they wouldn't have activated a mode. Follow the methodology.
+</MANDATORY>
 
 ## Agents
 
 | Agent | Role | Steps |
 |-------|------|-------|
-| `systems-design-critic` | Adversarial review from 5 perspectives | 3 (Option A) |
-| `systems-architect` | System-level assessment (ASSESS mode) | 2 (codebase evaluation) |
+| `systems-design-critic` | Adversarial review from 5 perspectives | 4 (Option A) |
+| `systems-architect` | System-level assessment (ASSESS mode) | 3 (codebase evaluation) |
 
 ## Skills
 
 | Skill | Step |
 |-------|------|
-| `systems-design-review-methodology` | All -- companion skill for this mode |
-| `adversarial-review` | 3 (Option B) -- parallel 5-perspective stress test |
-| `tradeoff-analysis` | 4 -- validating stated vs actual tradeoffs |
+| `systems-design-review-methodology` | All -- companion skill for this mode (MUST load immediately) |
+| `adversarial-review` | 4 (Option B) -- parallel 5-perspective stress test |
+| `tradeoff-analysis` | 5 -- validating stated vs actual tradeoffs |
 
 ---
 
