@@ -58,7 +58,7 @@ Not every design question needs the full pipeline. Match the approach to the sco
 - `systems-design-review-methodology` -- companion skill for `/systems-design-review` mode (7 steps, includes mandatory system classification)
 
 **Skills (domain):**
-- `adversarial-review` -- parallel 5-perspective stress test (fork skill)
+- `adversarial-review` -- parallel 6-perspective stress test (fork skill)
 - `tradeoff-analysis` -- 8-dimension comparison frame and methodology
 - `architecture-primitives` -- catalog of patterns with when-right and when-wrong
 - `system-type-web-service` -- domain patterns for web services
@@ -85,7 +85,7 @@ Not every design question needs the full pipeline. Match the approach to the sco
 
 **Agents:**
 - `systems-architect` -- system-level design (ANALYZE, DESIGN, ASSESS modes)
-- `systems-design-critic` -- adversarial review from 5 perspectives (for recipe/delegation use)
+- `systems-design-critic` -- adversarial review from 6 perspectives (for recipe/delegation use)
 - `systems-design-writer` -- writes validated designs to documents
 
 </STANDING-ORDER>

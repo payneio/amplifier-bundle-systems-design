@@ -64,7 +64,7 @@ they wouldn't have activated a mode. Follow the methodology.
 
 | Agent | Role | Steps |
 |-------|------|-------|
-| `systems-design-critic` | Adversarial review from 5 perspectives | 4 (Option A) |
+| `systems-design-critic` | Adversarial review from 6 perspectives | 4 (Option A) |
 | `systems-architect` | System-level assessment (ASSESS mode) | 3 (codebase evaluation) |
 
 ## Skills
@@ -72,7 +72,7 @@ they wouldn't have activated a mode. Follow the methodology.
 | Skill | Step |
 |-------|------|
 | `systems-design-review-methodology` | All -- companion skill for this mode (MUST load immediately) |
-| `adversarial-review` | 4 (Option B) -- parallel 5-perspective stress test |
+| `adversarial-review` | 4 (Option B) -- parallel 6-perspective stress test |
 | `tradeoff-analysis` | 5 -- validating stated vs actual tradeoffs |
 
 ---
@@ -82,3 +82,5 @@ they wouldn't have activated a mode. Follow the methodology.
 @systems-design:context/adversarial-perspectives.md
 
 @systems-design:context/system-design-principles.md
+
+@systems-design:context/design-review-questions.md

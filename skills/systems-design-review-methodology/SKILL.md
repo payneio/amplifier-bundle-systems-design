@@ -23,11 +23,20 @@ You guide the user through the review, synthesize findings, and facilitate decis
 
 ### Step 1: Understand the Design
 
-Before any critique:
+Before any critique, reconstruct the designer's reasoning:
+
 1. Read the design document or referenced files thoroughly.
 2. Identify the stated goals, constraints, and tradeoffs.
 3. If a codebase exists, survey the relevant parts.
 4. Note what the design explicitly addresses and what it is silent on.
+
+**Apply the Comprehending Existing lens:**
+- Why was this designed this way? What tradeoffs did the original designer make?
+- What does the choice of this approach over alternatives tell us about the constraints the designer was working under?
+- What is the mental model? Is it human-facing or system-facing?
+- What problems does the current design solve that aren't obvious at first glance?
+
+Understanding original intent prevents reviews that recommend "fixing" things the designer already considered and deliberately chose.
 
 Ask: **"Is this the complete design, or is there additional context I should know about?"**
 
@@ -40,7 +49,7 @@ Based on what you learned in Step 1, classify the system under review. Produce a
 **System types** -- which of these apply? List ALL that match, not just the primary one:
 
 | Type | Skill | Applies when... |
-|------|-------|-----------------|
+|------|-------|-----------------| 
 | Web service / API | `system-type-web-service` | HTTP endpoints, REST/GraphQL, request-response |
 | Event-driven | `system-type-event-driven` | Message queues, event logs, pub/sub, hooks, reactive patterns |
 | Data pipeline | `system-type-data-pipeline` | Batch/streaming processing, ETL, DAG scheduling |
@@ -59,7 +68,7 @@ Based on what you learned in Step 1, classify the system under review. Produce a
 **Design philosophies** -- which does the system claim or embody?
 
 | Philosophy | Skill | Applies when... |
-|------------|-------|-----------------|
+|------------|-------|-----------------| 
 | Linux/Unix | `design-philosophy-linux` | Mechanism vs policy, composability, small sharp tools |
 | Domain-driven | `design-philosophy-domain-driven` | Bounded contexts, ubiquitous language, aggregates |
 | Object-oriented | `design-philosophy-object-oriented` | SOLID, composition over inheritance, protocols/traits |
@@ -83,6 +92,13 @@ If reviewing an existing system or a design that modifies one:
 - Compare the design's claims against reality
 - Identify gaps between the design document and the implementation
 
+**Implementation viability check:** If the design proposes changes to an existing system, trace the impact exhaustively:
+- Use LSP `findReferences` and `incomingCalls` to find every usage of components being changed
+- For each usage, validate the new design can replace the old seamlessly
+- Flag any callsite where the replacement is non-trivial or ambiguous
+
+This is not optional exploration -- it is the mechanism that prevents "it worked in theory but broke 12 callsites" surprises.
+
 ### Step 4: Adversarial Analysis
 
 Delegate the deep adversarial review rather than doing it inline:
@@ -97,7 +113,7 @@ delegate(
 )
 ```
 
-**Option B -- Use the adversarial-review skill (spawns 5 parallel agents):**
+**Option B -- Use the adversarial-review skill (spawns 6 parallel agents):**
 ```
 load_skill(skill_name="adversarial-review")
 ```
@@ -118,6 +134,12 @@ Verify:
 - Are there unstated tradeoffs the designers may not have recognized?
 - Does the design optimize for what the team actually needs?
 
+**Apply the Simplicity and DX lenses:**
+- Isn't there a simpler way to accomplish what this design does? What concept have we uncovered that we didn't know before?
+- Are we mixing two concerns here? Aren't these actually separate responsibilities?
+- How many concepts must a developer hold in their head to use this correctly? Is the naming consistent and clear?
+- Does this diverge from ecosystem conventions? If so, is the divergence justified?
+
 ### Step 6: Synthesize and Recommend
 
 Present findings to the user.
@@ -127,6 +149,11 @@ Present findings to the user.
 - **Implementation** -- code quality, specific function issues, API ergonomics, type safety, naming. These are useful but secondary.
 
 If more than 30% of findings are implementation-level, you have drifted from the systems-design scope. Reframe implementation findings in architectural terms or separate them into a distinct section.
+
+**Check design integrity before finalizing:**
+- Is this design consistent with previous design decisions in the system? If not, is the inconsistency explicitly reconciled?
+- Who owns this component? Does it really belong here, or are we changing the responsibility of something established?
+- Does this introduce a second way to do something the system already does?
 
 **Assessment Summary:**
 - Overall health: [strong / has concerns / needs significant revision]

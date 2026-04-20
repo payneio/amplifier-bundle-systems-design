@@ -1,6 +1,6 @@
 ---
 name: adversarial-review
-description: "Adversarial review of a system design from 5 critical perspectives -- SRE, security, staff engineer, finance, and operator. Produces a unified risk assessment. Use for INTERACTIVE on-demand reviews during a design conversation (/adversarial-review). For RECIPE-DRIVEN reviews (where prior step context is needed), use the systems-design-critic agent instead."
+description: "Adversarial review of a system design from 6 critical perspectives -- SRE, security, staff engineer, finance, operator, and developer advocate. Produces a unified risk assessment. Use for INTERACTIVE on-demand reviews during a design conversation (/adversarial-review). For RECIPE-DRIVEN reviews (where prior step context is needed), use the systems-design-critic agent instead."
 context: fork
 disable-model-invocation: true
 user-invocable: true
@@ -30,9 +30,9 @@ Before launching reviewers, read and understand the design:
 2. Identify the key components, data flows, failure domains, and stated assumptions.
 3. Note what the design explicitly addresses and what it is silent on.
 
-## Phase 2: Launch Five Review Agents in Parallel
+## Phase 2: Launch Six Review Agents in Parallel
 
-Use the delegate tool to launch all five agents concurrently in a single message. Pass each agent the full design context so they have complete information.
+Use the delegate tool to launch all six agents concurrently in a single message. Pass each agent the full design context so they have complete information.
 
 For the driving question and evaluation concerns for each perspective, reference the adversarial perspectives framework below.
 
@@ -51,9 +51,12 @@ Delegate with instruction: "You are a finance/cost owner. Review this design fro
 ### Agent 5: Operator Perspective
 Delegate with instruction: "You are the person who operates this at 2am. Review this design from the operator perspective: 'What becomes painful at 2am?' [full design context]"
 
+### Agent 6: Developer Advocate Perspective
+Delegate with instruction: "You are a developer advocate who cares about developer experience. Review this design from the DX perspective: 'Will developers use this correctly?' Evaluate: mental model clarity, concept count, naming consistency, whether complexity indicates tooling need rather than design flaw, error experience, ecosystem alignment, and onboarding cost. [full design context]"
+
 ## Phase 3: Synthesize Risk Assessment
 
-Wait for all five agents to complete. Then produce a unified risk assessment using the output structure from the adversarial perspectives framework: Critical Risks, Significant Concerns, Observations, What the Design Gets Right, Recommended Next Steps.
+Wait for all six agents to complete. Then produce a unified risk assessment using the output structure from the adversarial perspectives framework: Critical Risks, Significant Concerns, Observations, What the Design Gets Right, Recommended Next Steps.
 
 ---
 

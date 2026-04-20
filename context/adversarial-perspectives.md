@@ -1,6 +1,6 @@
-# The 5 Adversarial Review Perspectives
+# The 6 Adversarial Review Perspectives
 
-Stress-test every design from these five perspectives before committing to it. Each perspective has a driving question and specific evaluation concerns.
+Stress-test every design from these six perspectives before committing to it. Each perspective has a driving question and specific evaluation concerns.
 
 ---
 
@@ -51,11 +51,21 @@ Stress-test every design from these five perspectives before committing to it. E
 - Configuration manageability and safe defaults
 - Missing documentation
 
+## 6. Developer Advocate -- "Will developers use this correctly?"
+
+- Mental model clarity: can you explain how this works in one sentence?
+- Concept count: how many ideas must a developer hold in their head?
+- Naming: does every name clearly indicate purpose and how it fits into the overall system? Is naming consistent across the design?
+- Tooling vs complexity: does added developer friction indicate a need for better tooling, rather than that the design is wrong?
+- Error experience: when a developer makes a mistake, does the system help them find it? Are error messages actionable?
+- Ecosystem alignment: does this diverge from standard conventions (language idioms, framework patterns, packaging norms)? If so, is the divergence justified?
+- Onboarding cost: can a new team member understand this from documentation, or does it require tribal knowledge?
+
 ---
 
 ## Output Structure
 
-After reviewing from all 5 perspectives, produce:
+After reviewing from all 6 perspectives, produce:
 
 **Critical Risks** -- issues that could cause outages, data loss, security breaches, or cost blowouts. Must be addressed before proceeding.
 

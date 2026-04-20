@@ -41,6 +41,13 @@ Present the architect's system map to the user. Ask: **"Does this capture the pr
 
 Do NOT proceed until the user validates the problem framing. If they correct the map, re-delegate with the corrections.
 
+**If this modifies an existing system**, apply the Comprehending Existing lens before generating the map:
+- Why was the existing system designed this way? What tradeoffs did the original designer make?
+- What does the current design choice tell us about the constraints the designer was working under?
+- What problems does the current design solve that aren't obvious at first glance?
+
+Include this context in the architect delegation so candidates respect existing design intent.
+
 ### Phase 2: Classify the System
 
 **This phase is mandatory. Do not skip it. Do not proceed to candidate architectures without completing it.**
@@ -50,7 +57,7 @@ Based on the validated system map from Phase 1, classify the system being design
 **System types** -- which of these apply? List ALL that match, not just the primary one:
 
 | Type | Skill | Applies when... |
-|------|-------|-----------------|
+|------|-------|-----------------| 
 | Web service / API | `system-type-web-service` | HTTP endpoints, REST/GraphQL, request-response |
 | Event-driven | `system-type-event-driven` | Message queues, event logs, pub/sub, hooks, reactive patterns |
 | Data pipeline | `system-type-data-pipeline` | Batch/streaming processing, ETL, DAG scheduling |
@@ -69,7 +76,7 @@ Based on the validated system map from Phase 1, classify the system being design
 **Design philosophies** -- which does the system claim or embody?
 
 | Philosophy | Skill | Applies when... |
-|------------|-------|-----------------|
+|------------|-------|-----------------| 
 | Linux/Unix | `design-philosophy-linux` | Mechanism vs policy, composability, small sharp tools |
 | Domain-driven | `design-philosophy-domain-driven` | Bounded contexts, ubiquitous language, aggregates |
 | Object-oriented | `design-philosophy-object-oriented` | SOLID, composition over inheritance, protocols/traits |
@@ -124,6 +131,13 @@ Present the architect's candidates to the user. Ask: **"Which direction feels ri
 
 Load the `architecture-primitives` skill if pattern selection is unclear.
 
+**Apply these review questions to each candidate before presenting:**
+- Isn't there a simpler way to do this? What if we just...?
+- Are there existing CS concepts this is an instance of? Are we reinventing something that already has a name?
+- Are we mixing two concerns here? Aren't these actually separate responsibilities?
+- Does this diverge from ecosystem conventions? Is there an existing library that replaces much of this?
+- How many concepts must a developer hold in their head to use this correctly?
+
 ### Phase 5: Tradeoff Analysis
 
 Delegate to the architect to evaluate the user's preferred candidates against the 8-dimension tradeoff frame:
@@ -153,6 +167,7 @@ For the leading candidate, identify:
 - Scaling bottlenecks
 - Operational complexity
 - Security surface
+- Developer experience impact (concept count, naming clarity, onboarding cost)
 
 If the design warrants deep adversarial review, delegate to `systems-design:systems-design-critic` or suggest `/adversarial-review`.
 
@@ -180,6 +195,13 @@ delegate(
 ```
 
 Present the architect's refined design to the user. Ask: **"Is this the design you want to proceed with?"**
+
+**Encourage hybrid refinement:** If the user liked aspects of multiple candidates, actively suggest combining them: "Should we take the simplicity of candidate A's data model with the resilience approach from candidate C?" Revision and recombination are expected, not exceptional.
+
+**Check design integrity:** Before finalizing, verify the refined design is consistent with prior decisions:
+- Does this proposal contradict any design decisions already validated in earlier phases?
+- Are we changing the responsibility of any component established in the system map?
+- Does this introduce a second way to do something the system already does?
 
 ### Phase 8: Migration and Success Metrics
 
@@ -216,7 +238,7 @@ Pass ALL validated content from the conversation. The writer structures it -- it
 | `design-philosophy-*` (all matching) | Phase 2 -- mandatory, load all that match |
 | `architecture-primitives` | Phase 4 -- selecting patterns for candidates |
 | `tradeoff-analysis` | Phase 5 -- detailed tradeoff methodology |
-| `adversarial-review` | Phase 6 -- parallel 5-perspective stress test |
+| `adversarial-review` | Phase 6 -- parallel 6-perspective stress test |
 
 ## The Catalytic Question
 

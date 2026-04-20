@@ -66,7 +66,7 @@ they wouldn't have activated a mode. Follow the methodology.
 | Agent | Role | Phases |
 |-------|------|--------|
 | `systems-architect` | System-level reasoning (ANALYZE / DESIGN / ASSESS) | 1, 4, 5, 7 |
-| `systems-design-critic` | Adversarial review from 5 perspectives | 6 (optional) |
+| `systems-design-critic` | Adversarial review from 6 perspectives | 6 (optional) |
 | `systems-design-writer` | Pure document production, zero design decisions | 9 |
 
 ## Skills
@@ -78,7 +78,7 @@ they wouldn't have activated a mode. Follow the methodology.
 | `design-philosophy-*` (all matching) | 2 -- mandatory, load all that match |
 | `architecture-primitives` | 4 -- selecting patterns for candidates |
 | `tradeoff-analysis` | 5 -- detailed tradeoff methodology |
-| `adversarial-review` | 6 -- parallel 5-perspective stress test |
+| `adversarial-review` | 6 -- parallel 6-perspective stress test |
 
 ---
 
@@ -87,3 +87,5 @@ they wouldn't have activated a mode. Follow the methodology.
 @systems-design:context/adversarial-perspectives.md
 
 @systems-design:context/system-design-principles.md
+
+@systems-design:context/design-review-questions.md
