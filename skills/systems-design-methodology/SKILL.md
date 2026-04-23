@@ -240,6 +240,24 @@ Pass ALL validated content from the conversation. The writer structures it -- it
 | `tradeoff-analysis` | Phase 5 -- detailed tradeoff methodology |
 | `adversarial-review` | Phase 6 -- parallel 6-perspective stress test |
 
+## Handling Follow-Up Questions After Agent Work
+
+When agents have already completed analysis and the user asks a follow-up question, do NOT re-delegate from scratch. Prior agent work is expensive -- treat it as an asset, not a disposable draft.
+
+**Decision rule:**
+
+1. **Can I answer from prior agent findings?** If the architect or critic already analyzed this, synthesize their findings into a response. This is conversation work, not analysis work -- it belongs to you.
+2. **Does the follow-up require genuinely new analysis?** New scope, new data, or a different analytical frame that prior work didn't cover. Only then re-delegate.
+3. **If re-delegating, build on prior work.** Resume the existing agent session (`session_id`) when possible. If spawning fresh, include a summary of prior findings in the instruction so the agent extends rather than repeats.
+
+**The test:** If the new delegation instruction overlaps >50% with a prior one, you are re-doing work. Synthesize instead.
+
+**Anti-pattern:** User asks a high-level question about architectural decisions. You feel uncertain, so you re-spawn the architect from scratch. The architect produces findings that overlap heavily with its first pass. Hours wasted.
+
+**Correct pattern:** User asks about architectural decisions. You check: the architect already analyzed boundaries, coupling, and failure modes. You synthesize those findings into an answer. If the user's question touches something the architect didn't cover (e.g., organizational fit), you delegate only that specific gap.
+
+**The "analysis vs conversation" heuristic:** If answering requires reasoning about tradeoffs, failure modes, or design alternatives using information you don't have, it is ANALYSIS -- delegate it. If answering requires presenting, reframing, or connecting findings that agents already produced, it is CONVERSATION -- do it yourself. When in doubt, check whether prior agent results already contain the answer before delegating.
+
 ## The Catalytic Question
 
 At the end of every design, ask:

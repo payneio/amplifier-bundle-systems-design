@@ -173,3 +173,21 @@ If the user wants to proceed with modifications, produce a clear action list:
 1. What to change (specific, not vague)
 2. Why (linked to a specific risk or finding)
 3. Priority (must-do vs should-do vs nice-to-do)
+
+## Handling Follow-Up Questions After Agent Work
+
+When agents have already completed analysis and the user asks a follow-up question, do NOT re-delegate from scratch. Prior agent work is expensive -- treat it as an asset, not a disposable draft.
+
+**Decision rule:**
+
+1. **Can I answer from prior agent findings?** If the architect or critic already analyzed this system, synthesize their findings into a response. This is conversation work, not analysis work -- it belongs to you.
+2. **Does the follow-up require genuinely new analysis?** New scope, new data, or a different analytical frame that prior work didn't cover. Only then re-delegate.
+3. **If re-delegating, build on prior work.** Resume the existing agent session (`session_id`) when possible. If spawning fresh, include a summary of prior findings in the instruction so the agent extends rather than repeats.
+
+**The test:** If the new delegation instruction overlaps >50% with a prior one, you are re-doing work. Synthesize instead.
+
+**Anti-pattern:** User asks about higher-level architectural decisions. You feel uncertain about your own synthesis, so you re-spawn the architect and critic from scratch. Both agents produce findings that overlap heavily with their first pass. Hours of computation wasted, and the user watches agents return similar results twice.
+
+**Correct pattern:** User asks about architectural decisions. You check: the architect already assessed boundaries, coupling, and failure modes; the critic already reviewed from 6 perspectives. You synthesize those findings into an answer focused on the user's specific question. If the question touches something genuinely uncovered (e.g., a specific subsystem the prior analysis didn't examine), you delegate only that gap -- and reference prior findings so the agent builds on them.
+
+**The "analysis vs conversation" heuristic:** If answering requires reasoning about tradeoffs, failure modes, or design alternatives using information you don't have, it is ANALYSIS -- delegate it. If answering requires presenting, reframing, or connecting findings that agents already produced, it is CONVERSATION -- do it yourself. When in doubt, check whether prior agent results already contain the answer before delegating.
