@@ -58,7 +58,7 @@ tools:
     config:
       gate_policy: "warn"
   - module: tool-skills
-    source: git+https://github.com/microsoft/amplifier-module-tool-skills@main
+    source: git+https://github.com/microsoft/amplifier-bundle-skills@main#subdirectory=modules/tool-skills
     config:
       skills:
         - "/data/labs/amplifier-system-design/skills"
