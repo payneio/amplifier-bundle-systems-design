@@ -31,7 +31,7 @@ The file should look like this after editing (showing the end of the tools secti
 
 ```yaml
   - module: tool-skills
-    source: git+https://github.com/microsoft/amplifier-module-tool-skills@main
+    source: git+https://github.com/microsoft/amplifier-bundle-skills@main#subdirectory=modules/tool-skills
     config:
       skills:
         - "/data/labs/amplifier-system-design/skills"
