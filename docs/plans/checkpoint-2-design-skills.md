@@ -63,7 +63,7 @@ bundle:
 
 tools:
   - module: tool-skills
-    source: git+https://github.com/microsoft/amplifier-module-tool-skills@main
+    source: git+https://github.com/microsoft/amplifier-bundle-skills@main#subdirectory=modules/tool-skills
     config:
       skills:
         - "@systems-design:skills"
